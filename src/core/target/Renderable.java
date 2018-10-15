@@ -1,9 +1,11 @@
 
 package core.target;
 
+import core.Engine;
+
 @FunctionalInterface
 public interface Renderable {
 	
-	public void render();
+	public void render(Engine source);
 	
 }

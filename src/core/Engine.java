@@ -6,18 +6,18 @@ import core.target.TargetManager;
 public class Engine extends CoreThreaded {
 	
 	private TargetManager targetManager = new TargetManager();
-	private boolean canLoad = false;
+	private boolean canLoad = true;
 	
 	@Override
 	public void init() {
-		if (canLoad) targetManager.load();
+		if (canLoad) targetManager.load(this);
 		super.init();
 	}
 	
 	@Override
 	public void dispose() {
 		super.dispose();
-		if (canLoad) targetManager.unload();
+		if (canLoad) targetManager.unload(this);
 	}
 	
 	public TargetManager getTargetManager() {

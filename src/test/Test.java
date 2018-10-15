@@ -5,11 +5,11 @@ import core.link.LinkMaster;
 import core.link.LinkedEngine;
 import core.link.control.LinkControl;
 import core.logic.LogicEngine;
+import core.render.GLFWWindow;
 import core.render.RenderEngine;
-import core.render.Window;
 import core.target.Target;
 import core.target.TargetManager;
-import test.object.PTriangle;
+import core.target.Targetable;
 
 public class Test {
 	
@@ -27,7 +27,7 @@ public class Test {
 		
 		LinkControl linkMaster = new LinkMaster();
 		LinkedEngine engineLogic = new LogicEngine();
-		LinkedEngine engineRender = new RenderEngine(new Window());
+		LinkedEngine engineRender = new RenderEngine(new GLFWWindow());
 		
 		linkMaster.addSlave(engineLogic);
 		linkMaster.addSlave(engineRender);
@@ -39,7 +39,6 @@ public class Test {
 		engineRender.setTargetManager(targetManager);
 		
 		engineLogic.setRefreshRate(60);
-		engineLogic.setCanLoad(true);
 		
 		linkMaster.linkedstart();
 		
@@ -47,18 +46,12 @@ public class Test {
 	
 	private class TestTarget extends Target {
 		
-		private final PTriangle triangle = new PTriangle(0.5f);
+		// private final Targetable pTriangle = new PTriangle(0.5f);
+		private final Targetable mTriangle = new MeshTriangle(0.5f);
 		
-		@Override
-		public void update() {
-			super.update();
-			triangle.update();
-		}
-		
-		@Override
-		public void render() {
-			super.render();
-			triangle.render();
+		public TestTarget() {
+			// addSubTargets(pTriangle);
+			addSubTargets(mTriangle);
 		}
 		
 	}

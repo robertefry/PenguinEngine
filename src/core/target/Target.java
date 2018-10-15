@@ -1,17 +1,45 @@
 
 package core.target;
 
-public class Target implements Targetable {
-	
-	private volatile boolean loaded = false;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
+import core.Engine;
+
+public class Target implements Targetable, Iterable<Targetable> {
+	
+	protected final Set<Targetable> targets = new HashSet<>();
+	protected volatile boolean created = false, loaded = false;
+	
 	@Override
-	public void load() {
-		loaded = true;
+	public void create() {
+		created = true;
+	}
+	
+	@Override
+	public void destroy() {
+		created = false;
+	}
+	
+	@Override
+	public boolean isCreated() {
+		return created;
 	}
 
 	@Override
-	public void unload() {
+	public void load(Engine source) {
+		loaded = true;
+		forEach(targetable -> {
+			if (!targetable.isLoaded()) targetable.load(source);
+		});
+	}
+
+	@Override
+	public void unload(Engine source) {
+		forEach(targetable -> {
+			if (targetable.isLoaded()) targetable.unload(source);
+		});
 		loaded = false;
 	}
 
@@ -21,9 +49,26 @@ public class Target implements Targetable {
 	}
 
 	@Override
-	public void update() {}
+	public void update(Engine source) {
+		forEach(targetable -> targetable.update(source));
+	}
 
 	@Override
-	public void render() {}
+	public void render(Engine source) {
+		forEach(targetable -> targetable.render(source));
+	}
+	
+	public void addSubTargets(Targetable... targetables) {
+		for (Targetable targetable : targetables) targets.add(targetable);
+	}
+	
+	public void removeSubTargets(Targetable... targetables) {
+		for (Targetable targetable : targetables) targets.remove(targetable);
+	}
+
+	@Override
+	public Iterator<Targetable> iterator() {
+		return targets.iterator();
+	}
 	
 }

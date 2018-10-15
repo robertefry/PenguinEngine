@@ -12,7 +12,7 @@ public class LogicEngine extends LinkedEngine {
 	@Override
 	public void tick() {
 		super.tick();
-		getTargetManager().update();
+		getTargetManager().update(this);
 	}
 	
 }

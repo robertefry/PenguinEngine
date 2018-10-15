@@ -1,5 +1,5 @@
 
-package test.object;
+package test;
 
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11.glBegin;
@@ -7,6 +7,7 @@ import static org.lwjgl.opengl.GL11.glColor3f;
 import static org.lwjgl.opengl.GL11.glEnd;
 import static org.lwjgl.opengl.GL11.glVertex3f;
 
+import core.Engine;
 import core.target.Target;
 
 public class PTriangle extends Target {
@@ -19,7 +20,7 @@ public class PTriangle extends Target {
 	}
 	
 	@Override
-	public void update() {
+	public void update(Engine source) {
 		
 		if (x + size >= 1 || x - size <= -1) dx *= -1;
 		if (y + size >= 1 || y - size <= -1) dy *= -1;
@@ -30,7 +31,7 @@ public class PTriangle extends Target {
 	}
 	
 	@Override
-	public void render() {
+	public void render(Engine source) {
 		glBegin(GL_TRIANGLES);
 		
 	    glColor3f(1, 0, 0);

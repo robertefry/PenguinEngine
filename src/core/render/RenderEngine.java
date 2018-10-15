@@ -5,11 +5,14 @@ import core.link.LinkedEngine;
 
 public class RenderEngine extends LinkedEngine {
 	
-	private final Window window;
+	public static final String THREAD_NAME = "render";
 	
-	public RenderEngine(Window window) {
+	private final GLFWWindow window;
+	private final RenderPipeline renderPipeline = new RenderPipeline();
+	
+	public RenderEngine(GLFWWindow window) {
 		this.window = window;
-		getThread().setName("rendering");
+		getThread().setName(THREAD_NAME);
 	}
 	
 	@Override
@@ -27,14 +30,24 @@ public class RenderEngine extends LinkedEngine {
 	@Override
 	public void tick() {
 		super.tick();
+		GLFWUtils.pollEvents();
 		if (window.isCloseRequested()) getSuperMaster().linkedstop();
-		getTargetManager().render();
-		window.update();
-		window.pollEvents();
+		GLUtils.clearScreen();
+		try {
+			renderPipeline.executeNext();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		getTargetManager().render(this);
+		window.swapBuffers();
 	}
 
-	public Window getWindow() {
+	public GLFWWindow getWindow() {
 		return window;
+	}
+	
+	public RenderPipeline getRenderPipeline() {
+		return renderPipeline;
 	}
 	
 }

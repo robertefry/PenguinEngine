@@ -16,7 +16,6 @@ import static org.lwjgl.glfw.GLFW.glfwGetVideoMode;
 import static org.lwjgl.glfw.GLFW.glfwGetWindowSize;
 import static org.lwjgl.glfw.GLFW.glfwInit;
 import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
-import static org.lwjgl.glfw.GLFW.glfwPollEvents;
 import static org.lwjgl.glfw.GLFW.glfwSetErrorCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetKeyCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowPos;
@@ -27,13 +26,8 @@ import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
 import static org.lwjgl.glfw.GLFW.glfwTerminate;
 import static org.lwjgl.glfw.GLFW.glfwWindowHint;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
-import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.glClear;
-import static org.lwjgl.opengl.GL11.glClearColor;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
-import java.awt.Color;
 import java.nio.IntBuffer;
 
 import org.lwjgl.Version;
@@ -42,53 +36,30 @@ import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.system.MemoryStack;
 
+import core.target.Creatable;
 import logging.Logger;
 
-public class Window {
+public class GLFWWindow implements Creatable {
 	
 	public int width = 800, height = 600;
 	public String title = "Penguin Engine 1.0";
-	public Color clearcolor = Color.DARK_GRAY;
 	
 	private long window = 0;
-	private boolean isCloseRequested = false;
 	
-	/**
-	 * Fetches all window events from the GLFW event buffer.
-	 */
-	public void pollEvents() {
-		glfwPollEvents();
-		isCloseRequested = glfwWindowShouldClose(window);
-	}
-	
-	/**
-	 * Updates the GLFW display buffers ready for subsequent rendering.
-	 */
-	public void update() {
+	public void swapBuffers() {
 		glfwSwapBuffers(window);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 	
-	/**
-	 * Has the window been asked to close?
-	 * @return true if the window should close.
-	 */
 	public boolean isCloseRequested() {
-		return isCloseRequested;
+		return glfwWindowShouldClose(window);
 	}
 	
-	/**
-	 * Get the GLFW window pointer.
-	 * @return the GLFW window pointer.
-	 */
-	public long getPointer() {
-		return window;
+	@Override
+	public boolean isCreated() {
+		return window != 0;
 	}
 	
-	/**
-	 * Creates the window using the global parameters.
-	 * This must be called before the window can be used, on the same thread the Window is to be accessed from!
-	 */
+	@Override
 	public void create() {
 		
 		// Don't create multiple windows with only one pointer.
@@ -146,16 +117,9 @@ public class Window {
 		// bindings available for use.
 		GL.createCapabilities();
 		
-		// Set the clear colour
-		float red = clearcolor.getRed() / 255f;
-		float green = clearcolor.getGreen() / 255f;
-		float blue = clearcolor.getBlue() / 255f;
-		float alpha = clearcolor.getAlpha() / 255f;
-		glClearColor(red, green, blue, alpha);
-		
-	}/**
-	 * Destroys the GLFW window context.
-	 */
+	}
+
+	@Override
 	public void destroy() {
 		// Free the window callbacks and destroy the window
 		glfwFreeCallbacks(window);
@@ -166,6 +130,10 @@ public class Window {
 		glfwSetErrorCallback(null).free();
 		
 		Logger.log("GLFW Window Destroyed");
+	}
+	
+	public long getWindowPointer() {
+		return window;
 	}
 	
 }

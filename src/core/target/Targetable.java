@@ -1,6 +1,6 @@
 
 package core.target;
 
-public interface Targetable extends Loadable, Updatable, Renderable {
+public interface Targetable extends Creatable, Loadable, Updatable, Renderable {
 	
 }

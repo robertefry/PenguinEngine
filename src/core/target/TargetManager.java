@@ -1,65 +1,68 @@
 
 package core.target;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.Collection;
 
-public class TargetManager implements Targetable, Iterable<Targetable> {
-	
-	private final Set<Targetable> targets = new HashSet<>();
-	private volatile boolean loaded = false;
+public class TargetManager extends Target implements Collection<Targetable> {
 
 	@Override
-	public void update() {
-		forEach(Targetable::update);
-	}
-
-	@Override
-	public void render() {
-		forEach(Targetable::render);
-	}
-
-	@Override
-	public void load() {
-		loaded = true;
-		forEach(targetable -> {
-			if (!targetable.isLoaded()) targetable.load();
-		});
-	}
-
-	@Override
-	public void unload() {
-		forEach(targetable -> {
-			if (targetable.isLoaded()) targetable.unload();
-		});
-		loaded = false;
-	}
-	
-	@Override
-	public boolean isLoaded() {
-		return loaded;
-	}
-	
 	public int size() {
 		return targets.size();
 	}
-	
-	public boolean contains(Targetable targetable) {
-		return targets.contains(targetable);
-	}
-	
-	public void add(Targetable... targetables) {
-		for (Targetable targetable : targetables) targets.add(targetable);
-	}
-	
-	public void remove(Targetable... targetables) {
-		for (Targetable targetable : targetables) targets.remove(targetable);
+
+	@Override
+	public boolean isEmpty() {
+		return targets.isEmpty();
 	}
 
 	@Override
-	public Iterator<Targetable> iterator() {
-		return targets.iterator();
+	public boolean contains(Object o) {
+		return targets.contains(o);
+	}
+
+	@Override
+	public Object[] toArray() {
+		return targets.toArray();
+	}
+
+	@Override
+	public <T> T[] toArray(T[] a) {
+		return targets.toArray(a);
+	}
+
+	@Override
+	public boolean add(Targetable e) {
+		return targets.add(e);
+	}
+
+	@Override
+	public boolean remove(Object o) {
+		return targets.remove(o);
+	}
+
+	@Override
+	public boolean containsAll(Collection<?> c) {
+		return targets.containsAll(c);
+	}
+
+	@Override
+	public boolean addAll(Collection<? extends Targetable> c) {
+		return targets.addAll(c);
+	}
+
+	@Override
+	public boolean removeAll(Collection<?> c) {
+		return targets.removeAll(c);
+	}
+
+	@Override
+	public boolean retainAll(Collection<?> c) {
+		return targets.retainAll(c);
+	}
+
+	@Override
+	public void clear() {
+		targets.clear();
 	}
 	
 }
