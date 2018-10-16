@@ -16,4 +16,12 @@ public class CoreThreaded extends CoreRunning {
 		return thread;
 	}
 	
+	public String getName() {
+		return thread.getName();
+	}
+	
+	public void setName(String name) {
+		thread.setName(name);
+	}
+	
 }
