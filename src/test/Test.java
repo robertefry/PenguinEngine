@@ -1,12 +1,12 @@
 
 package test;
 
-import core.engines.Engines;
-import core.link.LinkedEngine;
+import core.link.LinkMaster;
+import core.logic.LogicEngine;
 import core.render.GLFWWindow;
+import core.render.RenderEngine;
 import core.target.Target;
 import core.target.TargetManager;
-import core.target.Targetable;
 
 public class Test {
 	
@@ -16,34 +16,42 @@ public class Test {
 	
 	/*
 	 * WARNING::: Screen may flicker since a Targetable can update() and
-	 * render() at the same time
-	 * TODO May need to fix Targetable simultaneous update and render
+	 * render() at the same time TODO May need to fix Targetable simultaneous
+	 * update and render
 	 */
 	
-	private Test() {
+	public static class Global {
 		
-		LinkedEngine renderEngine = Engines.newRenderEngine(new GLFWWindow());
-		LinkedEngine logicEngine = Engines.newLogicEngine();
+		public static final LogicEngine logic_engine = new LogicEngine();
+		public static final RenderEngine render_engine = new RenderEngine(new GLFWWindow());
+	}
+	
+	private Test() {
+
+		Global.logic_engine.setRefreshRate(60);
 		
 		TargetManager targetManager = new TargetManager();
 		targetManager.add(new TestTarget());
 		
-		logicEngine.setRefreshRate(60);
-		logicEngine.setTargetManager(targetManager);
-		renderEngine.setTargetManager(targetManager);
+		Global.logic_engine.setTargetManager(targetManager);
+		Global.render_engine.setTargetManager(targetManager);
 		
-		Engines.startAll();
+		LinkMaster master = new LinkMaster();
+		master.addSlave(Global.logic_engine);
+		master.addSlave(Global.render_engine);
+		
+		master.linkedstart();
 		
 	}
 	
-	private class TestTarget extends Target {
+	private class TestTarget extends TargetManager {
 		
-		private final Targetable pTriangle = new PTriangle(0.5f);
-		// private final Targetable mTriangle = new MeshTriangle(0.5f);
+		private final Target triangle = new GLPipelineTriangle(0.5f);
+		// private final Targetable triangle = new MeshTriangle(0.7f);
+		// private final Shader shader = new Shader();
 		
 		public TestTarget() {
-			// addSubTargets(pTriangle);
-			addSubTargets(pTriangle);
+			add(triangle);
 		}
 		
 	}

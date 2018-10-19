@@ -2,9 +2,8 @@
 package core;
 
 import core.control.CoreControl;
-import core.control.Tickable;
 
-public class CoreRunning extends CoreControl implements Runnable, Tickable {
+public class CoreRunning extends CoreControl implements Runnable {
 	
 	private volatile Time time = new Time();
 	private float refreshRate = -1;
@@ -30,7 +29,6 @@ public class CoreRunning extends CoreControl implements Runnable, Tickable {
 		
 	}
 
-	@Override
 	public void tick() {}
 
 	public float getRefreshRate() {
@@ -41,7 +39,7 @@ public class CoreRunning extends CoreControl implements Runnable, Tickable {
 		this.refreshRate = refreshRate;
 	}
 	
-	private final class Time implements Tickable {
+	private final class Time {
 		
 		private long initialtime, currenttime;
 		private long delta = 0;
@@ -50,7 +48,6 @@ public class CoreRunning extends CoreControl implements Runnable, Tickable {
 			initialtime = currenttime = System.nanoTime();
 		}
 		
-		@Override
 		public void tick() {
 			currenttime = System.nanoTime();
 			delta = currenttime - initialtime;

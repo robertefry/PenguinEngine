@@ -7,20 +7,19 @@ import static org.lwjgl.opengl.GL11.glColor3f;
 import static org.lwjgl.opengl.GL11.glEnd;
 import static org.lwjgl.opengl.GL11.glVertex3f;
 
-import core.Engine;
 import core.target.Target;
 
-public class PTriangle extends Target {
+public class GLPipelineTriangle extends Target {
 	
 	private volatile float size;
 	private volatile float x = 0.3f, y = 0, dx = 0.007f, dy = 0.005f;
 	
-	public PTriangle(float size) {
+	public GLPipelineTriangle(float size) {
 		this.size = size;
 	}
 	
 	@Override
-	public void update(Engine source) {
+	public void update() {
 		
 		if (x + size >= 1 || x - size <= -1) dx *= -1;
 		if (y + size >= 1 || y - size <= -1) dy *= -1;
@@ -31,7 +30,7 @@ public class PTriangle extends Target {
 	}
 	
 	@Override
-	public void render(Engine source) {
+	public void render() {
 		glBegin(GL_TRIANGLES);
 		
 	    glColor3f(1, 0, 0);

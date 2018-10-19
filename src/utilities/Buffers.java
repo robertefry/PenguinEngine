@@ -5,7 +5,7 @@ import java.nio.FloatBuffer;
 
 import org.lwjgl.BufferUtils;
 
-import core.render.target.Vertex;
+import render.Vertex;
 
 public class Buffers {
 	

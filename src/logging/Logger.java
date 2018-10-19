@@ -17,6 +17,8 @@ public class Logger {
 	public static final LogType WARNING = new LogType(System.out, " WARN ");
 	public static final LogType SEVERE = new LogType(System.err, "SEVERE");
 	
+	public static boolean print = true;
+	
 	/**
 	 * Log objects as information to the <code>System.out</code> stream
 	 * @param objects to log
@@ -36,10 +38,11 @@ public class Logger {
 		final String prespace = String.format("%" + builder.length() + "s", "");
 		
 		int linenumber = 0;
-		for (Object part : objects) for (String line : part.toString().split("\n"))
+		for (Object part : objects) for (String line : part.toString().split("\n")) {
 			builder.append(String.format("%s%s", (linenumber++ > 0) ? ("\n" + prespace) : "", line));
+		}
 		
-		type.getPrintStream().println(builder.toString());
+		if (print) type.getPrintStream().println(builder.toString());
 		
 	}
 	

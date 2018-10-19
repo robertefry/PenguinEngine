@@ -36,13 +36,9 @@ import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.system.MemoryStack;
 
-import core.target.Creatable;
 import logging.Logger;
 
-public class GLFWWindow implements Creatable {
-	
-	public int width = 800, height = 600;
-	public String title = "Penguin Engine 1.0";
+public class GLFWWindow extends Window {
 	
 	private long window = 0;
 	
@@ -54,17 +50,11 @@ public class GLFWWindow implements Creatable {
 		return glfwWindowShouldClose(window);
 	}
 	
-	@Override
-	public boolean isCreated() {
-		return window != 0;
-	}
-	
-	@Override
 	public void create() {
 		
 		// Don't create multiple windows with only one pointer.
 		if (window != 0) return;
-		Logger.log("Creating GLFW Window on thread \"" + Thread.currentThread().getName() + "\"", "LWJGL Version " + Version.getVersion());
+		Logger.log("Creating GLFW Window on " + Thread.currentThread().getName(), "LWJGL Version " + Version.getVersion());
 		
 		// Setup an error callback
 		GLFWErrorCallback.createPrint(System.err).set();
@@ -119,7 +109,6 @@ public class GLFWWindow implements Creatable {
 		
 	}
 
-	@Override
 	public void destroy() {
 		// Free the window callbacks and destroy the window
 		glfwFreeCallbacks(window);

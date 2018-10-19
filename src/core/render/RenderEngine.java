@@ -5,10 +5,10 @@ import core.link.LinkedEngine;
 
 public class RenderEngine extends LinkedEngine {
 	
-	private final GLFWWindow window;
+	private final Window window;
 	private final RenderPipeline renderPipeline = new RenderPipeline();
 	
-	public RenderEngine(GLFWWindow window) {
+	public RenderEngine(Window window) {
 		this.window = window;
 	}
 	
@@ -35,11 +35,11 @@ public class RenderEngine extends LinkedEngine {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		getTargetManager().render(this);
+		getTargetManager().render();
 		window.swapBuffers();
 	}
 
-	public GLFWWindow getWindow() {
+	public Window getWindow() {
 		return window;
 	}
 	

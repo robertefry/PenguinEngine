@@ -2,8 +2,23 @@
 package core.target;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 public class TargetManager extends Target implements Collection<Targetable> {
+
+	protected final Set<Targetable> targets = new HashSet<>();
+
+	@Override
+	public void update() {
+		targets.forEach(target -> target.update());
+	}
+
+	@Override
+	public void render() {
+		targets.forEach(target -> target.render());
+	}
 
 	@Override
 	public int size() {
@@ -18,6 +33,11 @@ public class TargetManager extends Target implements Collection<Targetable> {
 	@Override
 	public boolean contains(Object o) {
 		return targets.contains(o);
+	}
+
+	@Override
+	public Iterator<Targetable> iterator() {
+		return targets.iterator();
 	}
 
 	@Override

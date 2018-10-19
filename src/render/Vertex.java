@@ -1,5 +1,5 @@
 
-package core.render.target;
+package render;
 
 import math.Vector3f;
 

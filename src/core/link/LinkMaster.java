@@ -35,35 +35,5 @@ public class LinkMaster extends CoreControl implements LinkControl {
 		slaves.remove(slave);
 		slave.setMaster(slave);
 	}
-
-	@Override
-	public void linkedstart() {
-		Linkable.getTree(getSuperMaster()).forEach(LinkControl::start);
-	}
-
-	@Override
-	public void linkedstop() {
-		Linkable.getTree(getSuperMaster()).forEach(LinkControl::stop);
-	}
-
-	@Override
-	public void linkedinit() {
-		Linkable.getTree(getSuperMaster()).forEach(LinkControl::init);
-	}
-
-	@Override
-	public void linkeddispose() {
-		Linkable.getTree(getSuperMaster()).forEach(LinkControl::dispose);
-	}
-
-	@Override
-	public void linkedsuspend() {
-		Linkable.getTree(getSuperMaster()).forEach(LinkControl::suspend);
-	}
-
-	@Override
-	public void linkedresume() {
-		Linkable.getTree(getSuperMaster()).forEach(LinkControl::resume);
-	}
 	
 }

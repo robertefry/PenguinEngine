@@ -1,7 +1,7 @@
 
 package core.control;
 
-public class CoreControl implements CoreControllable {
+public class CoreControl implements Startable, Initializable, Suspendable {
 	
 	private volatile boolean running = false, initialized = false, suspended = false;
 

@@ -8,6 +8,10 @@ import java.awt.Color;
 
 public class GLUtils {
 	
+	public static String getOpenGLVersion() {
+		return glGetString(GL_VERSION);
+	}
+	
 	public static void clearScreen() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
