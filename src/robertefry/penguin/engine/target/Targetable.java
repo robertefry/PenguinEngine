@@ -8,10 +8,10 @@ package robertefry.penguin.engine.target;
 
 public interface Targetable {
 	
-	public void init();
+	default void init() {}
 	
-	public void dispose();
+	default void dispose() {}
 	
-	public void update();
+	default void update() {}
 	
 }
