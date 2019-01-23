@@ -10,6 +10,7 @@ import robertefry.penguin.engine.target.TargetManager;
 public class Engine {
 
 	private final Thread thread = new Thread( new Running() );
+	private final Clock clock = new Clock();
 	private volatile boolean running = false, suspended = false;
 	private volatile float refresh = -1;
 
@@ -33,42 +34,60 @@ public class Engine {
 		suspended = false;
 	}
 
-	private static final class Time {
-
-		private static volatile long initialtime, currenttime;
-		private static volatile long delta = 0;
-
-		static {
-			initialtime = currenttime = System.nanoTime();
-		}
-
-		public static synchronized void tick() {
-			currenttime = System.nanoTime();
-			delta = currenttime - initialtime;
-			initialtime = currenttime;
-		}
-
-		public static synchronized long getDelta() {
-			return delta;
-		}
-
-	}
-
 	private final class Running implements Runnable {
+		
+		private final Time time = new Time();
 
 		@Override
 		public void run() {
 
-			manager.init();
-
+			init();
+			
 			double omega = 0;
 			while (isRunning()) {
-				Time.tick();
-				if (!isSuspended()) omega += (refresh < 0) ? 1 : Time.getDelta() * refresh / 1e9;
-				for ( ; omega >= 1; omega-- ) manager.update();
+				time.tick();
+				if (!isSuspended()) omega += (refresh < 0) ? 1 : time.getDelta() * refresh / 1e9;
+				for ( ; omega >= 1; omega-- ) tick();
+			}
+			
+			dispose();
+
+		}
+		
+		private void init() {
+			clock.init();
+			time.init();
+			manager.init();
+		}
+		
+		private void dispose() {
+			manager.dispose();
+			clock.dispose();
+		}
+		
+		private void tick() {
+			clock.update();
+			manager.update();
+		}
+
+		private final class Time {
+
+			private volatile long initialtime, currenttime;
+			private volatile long delta = 0;
+
+			public void init() {
+				initialtime = currenttime = System.nanoTime();
 			}
 
-			manager.dispose();
+			public void tick() {
+				currenttime = System.nanoTime();
+				delta = currenttime - initialtime;
+				initialtime = currenttime;
+			}
+
+			public long getDelta() {
+				return delta;
+			}
 
 		}
 
