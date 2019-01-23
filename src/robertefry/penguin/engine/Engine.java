@@ -1,7 +1,7 @@
 
-package engine;
+package robertefry.penguin.engine;
 
-import engine.target.TargetManager;
+import robertefry.penguin.engine.target.TargetManager;
 
 /**
  * @author Robert E Fry
