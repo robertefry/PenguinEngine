@@ -10,10 +10,10 @@ import robertefry.penguin.engine.target.TargetManager;
 public class Engine {
 
 	private final Thread thread = new Thread( new Running() );
-	private final Clock clock = new Clock();
 	private volatile boolean running = false, suspended = false;
 	private volatile float refresh = -1;
 
+	private final EngineClock clock = new EngineClock();
 	private final TargetManager manager = new TargetManager();
 
 	public synchronized void start() {
@@ -95,6 +95,10 @@ public class Engine {
 
 	public Thread getThread() {
 		return thread;
+	}
+	
+	public EngineClock getClock() {
+		return clock;
 	}
 
 	public TargetManager getTargetManager() {

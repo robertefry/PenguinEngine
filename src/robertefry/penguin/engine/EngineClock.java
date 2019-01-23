@@ -7,7 +7,7 @@ import robertefry.penguin.engine.target.Targetable;
  * @author Robert E Fry
  * @date 23 Jan 2019
  */
-public class Clock implements Targetable {
+public class EngineClock implements Targetable {
 
 	private long tickcount = 0;
 	private long starttime = 0;
