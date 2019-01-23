@@ -13,14 +13,14 @@ public class Clock implements Targetable {
 	private long starttime = 0;
 
 	@Override
-	public void init() {
-		Targetable.super.init();
+	public void init( Engine engine ) {
+		Targetable.super.init( engine );
 		starttime = System.currentTimeMillis();
 	}
 
 	@Override
-	public void update() {
-		Targetable.super.update();
+	public void update( Engine engine ) {
+		Targetable.super.update( engine );
 		tickcount++;
 	}
 	

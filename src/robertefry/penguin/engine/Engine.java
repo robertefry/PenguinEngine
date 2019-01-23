@@ -55,19 +55,19 @@ public class Engine {
 		}
 		
 		private void init() {
-			clock.init();
 			time.init();
-			manager.init();
+			clock.init( Engine.this );
+			manager.init( Engine.this );
 		}
 		
 		private void dispose() {
-			manager.dispose();
-			clock.dispose();
+			manager.dispose( Engine.this );
+			clock.dispose( Engine.this );
 		}
 		
 		private void tick() {
-			clock.update();
-			manager.update();
+			clock.update( Engine.this );
+			manager.update( Engine.this );
 		}
 
 		private final class Time {

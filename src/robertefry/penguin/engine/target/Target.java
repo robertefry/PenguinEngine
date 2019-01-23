@@ -3,6 +3,7 @@ package robertefry.penguin.engine.target;
 
 import java.util.HashSet;
 import java.util.Set;
+import robertefry.penguin.engine.Engine;
 
 /**
  * @author Robert E Fry
@@ -13,18 +14,18 @@ public class Target implements Targetable {
 	protected final Set<Targetable> targets = new HashSet<>();
 
 	@Override
-	public void init() {
-		targets.forEach( Targetable::init );
+	public void init( Engine engine ) {
+		targets.forEach( target -> target.init(engine) );
 	}
 
 	@Override
-	public void dispose() {
-		targets.forEach( Targetable::dispose );
+	public void dispose( Engine engine ) {
+		targets.forEach( target -> target.dispose(engine) );
 	}
 
 	@Override
-	public void update() {
-		targets.forEach( Targetable::update );
+	public void update( Engine engine ) {
+		targets.forEach( target -> target.update(engine) );
 	}
 
 	public void addSubTarget( Targetable... targets ) {
