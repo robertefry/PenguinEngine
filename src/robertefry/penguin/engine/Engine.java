@@ -2,6 +2,7 @@
 package robertefry.penguin.engine;
 
 import robertefry.penguin.engine.target.TargetManager;
+import robertefry.penguin.engine.target.Targetable;
 
 /**
  * @author Robert E Fry
@@ -13,7 +14,7 @@ public class Engine {
 	private volatile boolean running = false, suspended = false;
 	private volatile float refresh = -1;
 
-	private final EngineClock clock = new EngineClock();
+	private final Clock clock = new Clock();
 	private final TargetManager manager = new TargetManager();
 
 	public synchronized void start() {
@@ -32,6 +33,33 @@ public class Engine {
 
 	public synchronized void resume() {
 		suspended = false;
+	}
+	
+	public final class Clock implements Targetable {
+
+		private long tickcount = 0;
+		private long starttime = 0;
+
+		@Override
+		public void init( Engine engine ) {
+			Targetable.super.init( engine );
+			starttime = System.currentTimeMillis();
+		}
+
+		@Override
+		public void update( Engine engine ) {
+			Targetable.super.update( engine );
+			tickcount++;
+		}
+		
+		public long getStartTime() {
+			return starttime;
+		}
+		
+		public long getTickCount() {
+			return tickcount;
+		}
+
 	}
 
 	private final class Running implements Runnable {
@@ -97,7 +125,7 @@ public class Engine {
 		return thread;
 	}
 	
-	public EngineClock getClock() {
+	public Clock getClock() {
 		return clock;
 	}
 
