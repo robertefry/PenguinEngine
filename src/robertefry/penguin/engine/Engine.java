@@ -2,7 +2,6 @@
 package robertefry.penguin.engine;
 
 import robertefry.penguin.engine.target.TargetManager;
-import robertefry.penguin.engine.target.Targetable;
 
 /**
  * @author Robert E Fry
@@ -10,21 +9,22 @@ import robertefry.penguin.engine.target.Targetable;
  */
 public class Engine {
 
-	private final Thread thread = new Thread( new Running() );
-	private volatile boolean running = false, suspended = false;
+	private final Running running = new Running();
+	private final Thread thread = new Thread( running );
+	private volatile boolean active = false, suspended = false;
 	private volatile float refresh = -1;
 
 	private final Clock clock = new Clock();
 	private final TargetManager manager = new TargetManager();
 
 	public synchronized void start() {
-		if (isRunning()) return;
-		running = true;
+		if (isActive()) return;
+		active = true;
 		thread.start();
 	}
 
 	public synchronized void stop() {
-		running = false;
+		active = false;
 	}
 
 	public synchronized void suspend() {
@@ -35,21 +35,22 @@ public class Engine {
 		suspended = false;
 	}
 	
-	public final class Clock implements Targetable {
+	public final class Clock {
 
 		private long tickcount = 0;
 		private long starttime = 0;
+		private double delta = 0;
 
-		@Override
-		public void init( Engine engine ) {
-			Targetable.super.init( engine );
-			starttime = System.currentTimeMillis();
+		private void init( Engine engine ) {
+			starttime = engine.running.time.initialtime;
 		}
 
-		@Override
-		public void update( Engine engine ) {
-			Targetable.super.update( engine );
+		private void update( Engine engine ) {
+			delta = engine.running.time.delta;
 			tickcount++;
+		}
+		
+		private void dispose( Engine engine ) {
 		}
 		
 		public long getStartTime() {
@@ -59,10 +60,35 @@ public class Engine {
 		public long getTickCount() {
 			return tickcount;
 		}
+		
+		public double getDelta() {
+			return delta;
+		}
 
 	}
 
 	private final class Running implements Runnable {
+
+		private final class Time {
+
+			private volatile long initialtime, currenttime;
+			private volatile long delta = 0;
+
+			public void init() {
+				initialtime = currenttime = System.nanoTime();
+			}
+
+			public void tick() {
+				currenttime = System.nanoTime();
+				delta = currenttime - initialtime;
+				initialtime = currenttime;
+			}
+
+			public long getDelta() {
+				return delta;
+			}
+
+		}
 		
 		private final Time time = new Time();
 
@@ -72,7 +98,7 @@ public class Engine {
 			init();
 			
 			double omega = 0;
-			while (isRunning()) {
+			while (isActive()) {
 				time.tick();
 				if (!isSuspended()) omega += (refresh < 0) ? 1 : time.getDelta() * refresh / 1e9;
 				for ( ; omega >= 1; omega-- ) tick();
@@ -98,31 +124,6 @@ public class Engine {
 			manager.update( Engine.this );
 		}
 
-		private final class Time {
-
-			private volatile long initialtime, currenttime;
-			private volatile long delta = 0;
-
-			public void init() {
-				initialtime = currenttime = System.nanoTime();
-			}
-
-			public void tick() {
-				currenttime = System.nanoTime();
-				delta = currenttime - initialtime;
-				initialtime = currenttime;
-			}
-
-			public long getDelta() {
-				return delta;
-			}
-
-		}
-
-	}
-
-	public Thread getThread() {
-		return thread;
 	}
 	
 	public Clock getClock() {
@@ -133,8 +134,8 @@ public class Engine {
 		return manager;
 	}
 
-	public boolean isRunning() {
-		return running;
+	public boolean isActive() {
+		return active;
 	}
 
 	public boolean isSuspended() {
