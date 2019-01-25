@@ -32,7 +32,9 @@ public class FrameCounter implements Targetable {
 	public void update( Engine engine ) {
 		Targetable.super.update( engine );
 		count++;
-		if (System.currentTimeMillis() - lasttime > duration) {
+		long currenttime = System.currentTimeMillis();
+		if (currenttime - lasttime >= duration) {
+			lasttime = currenttime;
 			printer.println( "frames=" + count );
 			count = 0;
 		}
