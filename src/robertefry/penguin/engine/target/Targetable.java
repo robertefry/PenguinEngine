@@ -17,5 +17,8 @@ public interface Targetable {
 
 	default void tick( Engine engine ) {
 	}
+	
+	default void render( Engine engine ) {
+	}
 
 }

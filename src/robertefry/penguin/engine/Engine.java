@@ -51,10 +51,23 @@ public final class Engine implements Startable, Suspendable {
 			init();
 			
 			double omega = 0;
+			boolean renderable = false;
+			
 			while (isActive()) {
+				
 				time.tick();
 				if (!isSuspended()) omega += (refresh < 0) ? 1 : time.getDelta() * refresh / 1e9;
-				for ( ; omega >= 1; omega-- ) tick();
+				
+				for ( ; omega >= 1; omega-- ) {
+					tick();
+					renderable = true;
+				}
+				
+				if (renderable) {
+					renderable = false;
+					render();
+				}
+				
 			}
 			
 			dispose();
@@ -71,6 +84,10 @@ public final class Engine implements Startable, Suspendable {
 		
 		private void tick() {
 			manager.tick( Engine.this );
+		}
+		
+		private void render() {
+			manager.render( Engine.this );
 		}
 
 	}
