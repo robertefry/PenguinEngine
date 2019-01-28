@@ -15,7 +15,7 @@ public interface Targetable {
 	default void dispose( Engine engine ) {
 	}
 
-	default void update( Engine engine ) {
+	default void tick( Engine engine ) {
 	}
 
 }

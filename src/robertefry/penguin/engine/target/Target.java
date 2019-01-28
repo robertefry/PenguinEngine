@@ -24,8 +24,8 @@ public class Target implements Targetable {
 	}
 
 	@Override
-	public void update( Engine engine ) {
-		targets.forEach( target -> target.update(engine) );
+	public void tick( Engine engine ) {
+		targets.forEach( target -> target.tick(engine) );
 	}
 
 	public void addSubTarget( Targetable... targets ) {

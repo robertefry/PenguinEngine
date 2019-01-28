@@ -70,7 +70,7 @@ public final class Engine implements Startable, Suspendable {
 		}
 		
 		private void tick() {
-			manager.update( Engine.this );
+			manager.tick( Engine.this );
 		}
 
 	}

@@ -29,8 +29,8 @@ public class FrameCounter implements Targetable {
 	}
 
 	@Override
-	public void update( Engine engine ) {
-		Targetable.super.update( engine );
+	public void tick( Engine engine ) {
+		Targetable.super.tick( engine );
 		count++;
 		long currenttime = System.currentTimeMillis();
 		if (currenttime - lasttime >= duration) {
