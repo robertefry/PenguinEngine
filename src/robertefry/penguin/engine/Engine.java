@@ -10,7 +10,7 @@ import robertefry.penguin.engine.target.TargetManager;
  * @author Robert E Fry
  * @date 22 Jan 2019
  */
-public final class Engine implements Startable, Suspendable {
+public class Engine implements Startable, Suspendable {
 
 	private final Time time = new Time();
 	private final Running running = new Running();
