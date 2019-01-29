@@ -41,17 +41,25 @@ public class Engine implements Startable, Suspendable {
 	public synchronized void resume() {
 		suspended = false;
 	}
+	
+	public void forceTick() {
+		running.omega++;
+	}
+	
+	public void forceRender() {
+		running.renderable = true;
+	}
 
 	private final class Running implements Runnable {
+		
+		private double omega = 0;
+		private boolean renderable = false;
 
 		@Override
 		public void run() {
 
 			time.init();
 			init();
-			
-			double omega = 0;
-			boolean renderable = false;
 			
 			while (isActive()) {
 				
