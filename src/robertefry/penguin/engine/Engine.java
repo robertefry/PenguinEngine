@@ -3,7 +3,6 @@ package robertefry.penguin.engine;
 
 import robertefry.penguin.engine.core.Startable;
 import robertefry.penguin.engine.core.Suspendable;
-import robertefry.penguin.engine.core.Time;
 import robertefry.penguin.engine.target.TargetManager;
 
 /**
@@ -22,9 +21,10 @@ public class Engine implements Startable, Suspendable {
 
 	@Override
 	public synchronized void start() {
-		if (isActive()) return;
-		active = true;
-		thread.start();
+		if (!isActive()) {
+			active = true;
+			thread.start();
+		}
 	}
 
 	@Override
@@ -41,17 +41,39 @@ public class Engine implements Startable, Suspendable {
 	public synchronized void resume() {
 		suspended = false;
 	}
-	
-	public void forceTick() {
+
+	public synchronized void forceTick() {
 		running.omega++;
 	}
-	
-	public void forceRender() {
+
+	public synchronized void forceRender() {
 		running.renderable = true;
 	}
 
+	private final class Time {
+
+		private volatile long initialtime = 0; // time when engine last ticked over
+		private volatile long currenttime = 0; // time when current tick called
+		private volatile long delta = 0; // time taken for engine to tick over
+
+		private synchronized void init() {
+			initialtime = System.nanoTime();
+		}
+
+		private synchronized void tick() {
+			currenttime = System.nanoTime();
+			delta = currenttime - initialtime;
+			initialtime = currenttime;
+		}
+
+		public synchronized long getDelta() {
+			return delta;
+		}
+
+	}
+
 	private final class Running implements Runnable {
-		
+
 		private double omega = 0;
 		private boolean renderable = false;
 
@@ -60,46 +82,48 @@ public class Engine implements Startable, Suspendable {
 
 			time.init();
 			init();
-			
+
 			while (isActive()) {
-				
-				time.tick();
-				if (!isSuspended()) omega += (refresh < 0) ? 1 : time.getDelta() * refresh / 1e9;
-				
+
+				if (!isSuspended()) {
+					time.tick();
+					omega += (refresh < 0) ? 1 : time.getDelta() * refresh / 1e9;
+				}
+
 				for ( ; omega >= 1; omega-- ) {
 					tick();
 					renderable = true;
 				}
-				
+
 				if (renderable) {
 					renderable = false;
 					render();
 				}
-				
+
 			}
-			
+
 			dispose();
 
 		}
-		
+
 		private void init() {
 			manager.init( Engine.this );
 		}
-		
+
 		private void dispose() {
 			manager.dispose( Engine.this );
 		}
-		
+
 		private void tick() {
 			manager.tick( Engine.this );
 		}
-		
+
 		private void render() {
 			manager.render( Engine.this );
 		}
 
 	}
-	
+
 	public Time getTime() {
 		return time;
 	}
