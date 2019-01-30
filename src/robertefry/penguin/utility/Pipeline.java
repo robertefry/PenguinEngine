@@ -39,12 +39,12 @@ public class Pipeline {
 	}
 
 	public void executeNow( Runnable task, long timeout, TimeUnit unit )
-			throws InterruptedException, ExecutionException, TimeoutException {
+		throws InterruptedException, ExecutionException, TimeoutException {
 		executeLater( task ).get( timeout, unit );
 	}
 
 	public < T > T executeNow( Callable<T> call, long timeout, TimeUnit unit )
-			throws InterruptedException, ExecutionException, TimeoutException {
+		throws InterruptedException, ExecutionException, TimeoutException {
 		return executeLater( call ).get( timeout, unit );
 	}
 
