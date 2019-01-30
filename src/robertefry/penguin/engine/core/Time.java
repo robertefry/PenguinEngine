@@ -7,7 +7,7 @@ public final class Time {
 	private volatile long delta = 0;		// time taken for engine to tick over
 
 	public void init() {
-		initialtime = currenttime = System.nanoTime();
+		initialtime = System.nanoTime();
 	}
 
 	public void tick() {
