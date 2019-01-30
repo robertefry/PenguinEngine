@@ -39,7 +39,7 @@ public class FrameCounter extends SimpleCounter {
 				out.write( String.format( "%s\n", getCount() ).getBytes() );
 			} catch ( IOException e ) {
 				LogFactory.getLog( getClass() ).warn(
-					"exception occoured when writing to the framecounter output stream",
+					"exception occoured when writing to the output stream",
 					e
 				);
 			}
