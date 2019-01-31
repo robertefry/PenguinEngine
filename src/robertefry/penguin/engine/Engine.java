@@ -14,6 +14,7 @@ public class Engine implements Startable, Suspendable {
 	private final Time time = new Time();
 	private final Running running = new Running();
 	private final Thread thread = new Thread( running );
+	
 	private volatile boolean active = false, suspended = false;
 	private volatile float refresh = -1;
 
@@ -52,18 +53,13 @@ public class Engine implements Startable, Suspendable {
 
 	private final class Time {
 
-		private volatile long initialtime = 0; // time when engine last ticked over
-		private volatile long currenttime = 0; // time when current tick called
-		private volatile long delta = 0; // time taken for engine to tick over
-
-		private synchronized void init() {
-			initialtime = System.nanoTime();
-		}
+		private volatile long lasttime = 0; // time when engine last ticked over
+		private volatile long delta = 0;    // time taken for the last tick sequence
 
 		private synchronized void tick() {
-			currenttime = System.nanoTime();
-			delta = currenttime - initialtime;
-			initialtime = currenttime;
+			long currenttime = System.nanoTime();
+			delta = currenttime - lasttime;
+			lasttime = currenttime;
 		}
 
 		public synchronized long getDelta() {
@@ -80,19 +76,17 @@ public class Engine implements Startable, Suspendable {
 		@Override
 		public void run() {
 
-			time.init();
 			init();
 
 			while (isActive()) {
 
-				if (!isSuspended()) {
-					time.tick();
-					omega += (refresh < 0) ? 1 : time.getDelta() * refresh / 1e9;
-				}
+				time.tick();
+				if (!isSuspended()) omega += (refresh < 0) ? 1 : time.getDelta() * refresh / 1e9;
 
-				for ( ; omega >= 1; omega-- ) {
-					tick();
+				while ( omega >= 1 ) {
+					omega--;
 					renderable = true;
+					tick();
 				}
 
 				if (renderable) {

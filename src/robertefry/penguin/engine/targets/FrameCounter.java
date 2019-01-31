@@ -13,11 +13,11 @@ import robertefry.penguin.engine.Engine;
 public class FrameCounter extends SimpleCounter {
 
 	private final OutputStream out;
-	private final long duration;
+	private final double duration;
 
 	private long lasttime = 0;
 
-	public FrameCounter( OutputStream out, long duration ) {
+	public FrameCounter( OutputStream out, double duration ) {
 		this.out = out;
 		this.duration = duration;
 	}
