@@ -25,7 +25,7 @@ public class Engine implements Startable, Suspendable {
 
 	private final TargetManager manager = new TargetManager();
 	private final Set<EngineStateListener> stateListeners = new HashSet<>();
-	private final Stack<Runnable> pretickTasks = new Stack<>();
+	private final Stack<Runnable> postCycleTasks = new Stack<>();
 
 	@Override
 	public synchronized void start() {
@@ -42,16 +42,16 @@ public class Engine implements Startable, Suspendable {
 
 	@Override
 	public synchronized void suspend() {
-		pretickTasks.push( () -> stateListeners.forEach( EngineStateListener::engineSuspending ) );
+		postCycleTasks.push( () -> stateListeners.forEach( EngineStateListener::engineSuspending ) );
 		suspended = true;
-		pretickTasks.push( () -> stateListeners.forEach( EngineStateListener::engineSuspended ) );
+		postCycleTasks.push( () -> stateListeners.forEach( EngineStateListener::engineSuspended ) );
 	}
 
 	@Override
 	public synchronized void resume() {
-		pretickTasks.push( () -> stateListeners.forEach( EngineStateListener::engineResuming ) );
+		postCycleTasks.push( () -> stateListeners.forEach( EngineStateListener::engineResuming ) );
 		suspended = false;
-		pretickTasks.push( () -> stateListeners.forEach( EngineStateListener::engineResumed ) );
+		postCycleTasks.push( () -> stateListeners.forEach( EngineStateListener::engineResumed ) );
 	}
 
 	public synchronized void forceTick() {
@@ -94,7 +94,6 @@ public class Engine implements Startable, Suspendable {
 			while (isActive()) {
 
 				time.tick();
-				pretickTasks.forEach( Runnable::run );
 				if (!isSuspended()) omega += (refresh < 0) ? 1 : time.getDelta() * refresh / 1e9;
 
 				while (omega >= 1) {
@@ -108,12 +107,19 @@ public class Engine implements Startable, Suspendable {
 					render();
 				}
 
+				runPostCycleTasks();
+
 			}
 
 			stateListeners.forEach( EngineStateListener::engineStopping );
+			runPostCycleTasks();
 			dispose();
 			stateListeners.forEach( EngineStateListener::engineStopped );
 
+		}
+		
+		private void runPostCycleTasks() {
+			while ( !postCycleTasks.isEmpty() ) postCycleTasks.pop().run();
 		}
 
 		private void init() {
