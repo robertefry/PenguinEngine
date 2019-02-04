@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Stack;
+import robertefry.penguin.engine.core.Resetable;
 import robertefry.penguin.engine.core.Startable;
 import robertefry.penguin.engine.core.Suspendable;
 import robertefry.penguin.engine.listener.EngineStateListener;
@@ -14,7 +15,7 @@ import robertefry.penguin.engine.target.TargetManager;
  * @author Robert E Fry
  * @date 22 Jan 2019
  */
-public class Engine implements Startable, Suspendable {
+public class Engine implements Resetable, Startable, Suspendable {
 
 	private final Time time = new Time();
 	private final Running running = new Running();
@@ -25,7 +26,7 @@ public class Engine implements Startable, Suspendable {
 
 	private final TargetManager manager = new TargetManager();
 	private final Set<EngineStateListener> stateListeners = new HashSet<>();
-	private final Stack<Runnable> postCycleTasks = new Stack<>();
+	private final Stack<Runnable> cycleTasks = new Stack<>();
 
 	@Override
 	public synchronized void start() {
@@ -42,16 +43,21 @@ public class Engine implements Startable, Suspendable {
 
 	@Override
 	public synchronized void suspend() {
-		postCycleTasks.push( () -> stateListeners.forEach( EngineStateListener::engineSuspending ) );
+		cycleTasks.push( () -> stateListeners.forEach( EngineStateListener::engineSuspending ) );
 		suspended = true;
-		postCycleTasks.push( () -> stateListeners.forEach( EngineStateListener::engineSuspended ) );
+		cycleTasks.push( () -> stateListeners.forEach( EngineStateListener::engineSuspended ) );
 	}
 
 	@Override
 	public synchronized void resume() {
-		postCycleTasks.push( () -> stateListeners.forEach( EngineStateListener::engineResuming ) );
+		cycleTasks.push( () -> stateListeners.forEach( EngineStateListener::engineResuming ) );
 		suspended = false;
-		postCycleTasks.push( () -> stateListeners.forEach( EngineStateListener::engineResumed ) );
+		cycleTasks.push( () -> stateListeners.forEach( EngineStateListener::engineResumed ) );
+	}
+
+	@Override
+	public void reset() {
+		cycleTasks.push( () -> manager.reset() );
 	}
 
 	public synchronized void forceTick() {
@@ -94,6 +100,7 @@ public class Engine implements Startable, Suspendable {
 			while (isActive()) {
 
 				time.tick();
+				runCycleTasks();
 				if (!isSuspended()) omega += (refresh < 0) ? 1 : time.getDelta() * refresh / 1e9;
 
 				while (omega >= 1) {
@@ -107,19 +114,17 @@ public class Engine implements Startable, Suspendable {
 					render();
 				}
 
-				runPostCycleTasks();
-
 			}
 
 			stateListeners.forEach( EngineStateListener::engineStopping );
-			runPostCycleTasks();
+			runCycleTasks();
 			dispose();
 			stateListeners.forEach( EngineStateListener::engineStopped );
 
 		}
-		
-		private void runPostCycleTasks() {
-			while ( !postCycleTasks.isEmpty() ) postCycleTasks.pop().run();
+
+		private void runCycleTasks() {
+			while (!cycleTasks.isEmpty()) cycleTasks.pop().run();
 		}
 
 		private void init() {
