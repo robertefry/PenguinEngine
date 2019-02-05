@@ -8,6 +8,7 @@ import java.util.Stack;
 import robertefry.penguin.engine.core.Resetable;
 import robertefry.penguin.engine.core.Startable;
 import robertefry.penguin.engine.core.Suspendable;
+import robertefry.penguin.engine.listener.EngineLogicListener;
 import robertefry.penguin.engine.listener.EngineStateListener;
 import robertefry.penguin.engine.listener.EngineThreadListener;
 import robertefry.penguin.engine.target.TargetManager;
@@ -29,6 +30,7 @@ public class Engine implements Resetable, Startable, Suspendable {
 	private final Stack<Runnable> preCycleTasks = new Stack<>();
 	private final Set<EngineStateListener> stateListeners = new HashSet<>();
 	private final Set<EngineThreadListener> threadListeners = new HashSet<>();
+	private final Set<EngineLogicListener> logicListeners = new HashSet<>();
 
 	@Override
 	public synchronized void start() {
@@ -113,12 +115,14 @@ public class Engine implements Resetable, Startable, Suspendable {
 				while ( !preCycleTasks.isEmpty() ) preCycleTasks.pop().run();
 				if ( !isSuspended() ) omega += ( refreshrate < 0 ) ? 1 : timing.getDelta() * refreshrate / 1e9;
 
+				logicListeners.forEach( EngineLogicListener::onEngineTick );
 				while ( omega >= 1 ) {
 					omega--;
 					renderable = true;
 					tick();
 				}
 
+				logicListeners.forEach( EngineLogicListener::onEngineRender );
 				if ( renderable ) {
 					renderable = false;
 					render();
@@ -172,6 +176,14 @@ public class Engine implements Resetable, Startable, Suspendable {
 
 	public void removeThreadListener( EngineThreadListener... listeners ) {
 		threadListeners.addAll( Arrays.asList( listeners ) );
+	}
+
+	public void addLogicListener( EngineLogicListener... listeners ) {
+		logicListeners.addAll( Arrays.asList( listeners ) );
+	}
+
+	public void removeLogicListener( EngineLogicListener... listeners ) {
+		logicListeners.removeAll( Arrays.asList( listeners ) );
 	}
 
 	public boolean isAlive() {
