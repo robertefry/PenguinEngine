@@ -26,7 +26,7 @@ public class Engine implements Resetable, Startable, Suspendable {
 
 	private final TargetManager manager = new TargetManager();
 	private final Set<EngineStateListener> stateListeners = new HashSet<>();
-	private final Stack<Runnable> cycleTasks = new Stack<>();
+	private final Stack<Runnable> preCycleTasks = new Stack<>();
 
 	@Override
 	public synchronized void start() {
@@ -43,21 +43,21 @@ public class Engine implements Resetable, Startable, Suspendable {
 
 	@Override
 	public synchronized void suspend() {
-		cycleTasks.push( () -> stateListeners.forEach( EngineStateListener::engineSuspending ) );
+		preCycleTasks.push( () -> stateListeners.forEach( EngineStateListener::engineSuspending ) );
 		suspended = true;
-		cycleTasks.push( () -> stateListeners.forEach( EngineStateListener::engineSuspended ) );
+		preCycleTasks.push( () -> stateListeners.forEach( EngineStateListener::engineSuspended ) );
 	}
 
 	@Override
 	public synchronized void resume() {
-		cycleTasks.push( () -> stateListeners.forEach( EngineStateListener::engineResuming ) );
+		preCycleTasks.push( () -> stateListeners.forEach( EngineStateListener::engineResuming ) );
 		suspended = false;
-		cycleTasks.push( () -> stateListeners.forEach( EngineStateListener::engineResumed ) );
+		preCycleTasks.push( () -> stateListeners.forEach( EngineStateListener::engineResumed ) );
 	}
 
 	@Override
 	public void reset() {
-		cycleTasks.push( () -> manager.reset() );
+		preCycleTasks.push( () -> manager.reset() );
 	}
 
 	public synchronized void forceTick() {
@@ -124,7 +124,7 @@ public class Engine implements Resetable, Startable, Suspendable {
 		}
 
 		private void runCycleTasks() {
-			while (!cycleTasks.isEmpty()) cycleTasks.pop().run();
+			while (!preCycleTasks.isEmpty()) preCycleTasks.pop().run();
 		}
 
 		private void init() {
@@ -151,6 +151,12 @@ public class Engine implements Resetable, Startable, Suspendable {
 
 	public TargetManager getTargetManager() {
 		return manager;
+	}
+
+	public void pushPreCycleTasks( Runnable... tasks ) {
+		for ( Runnable task : tasks ) {
+			preCycleTasks.push( task );
+		}
 	}
 
 	public void addStateListener( EngineStateListener... listeners ) {
