@@ -7,28 +7,10 @@ package robertefry.penguin.engine.listener;
  */
 public interface EngineStateListener {
 
-	default void engineStarting() {
+	default void onEngineSuspend() {
 	}
 
-	default void engineStarted() {
-	}
-
-	default void engineStopping() {
-	}
-
-	default void engineStopped() {
-	}
-
-	default void engineSuspending() {
-	}
-
-	default void engineSuspended() {
-	}
-
-	default void engineResuming() {
-	}
-
-	default void engineResumed() {
+	default void onEngineResume() {
 	}
 
 }

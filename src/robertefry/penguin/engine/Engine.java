@@ -9,6 +9,7 @@ import robertefry.penguin.engine.core.Resetable;
 import robertefry.penguin.engine.core.Startable;
 import robertefry.penguin.engine.core.Suspendable;
 import robertefry.penguin.engine.listener.EngineStateListener;
+import robertefry.penguin.engine.listener.EngineThreadListener;
 import robertefry.penguin.engine.target.TargetManager;
 
 /**
@@ -17,20 +18,21 @@ import robertefry.penguin.engine.target.TargetManager;
  */
 public class Engine implements Resetable, Startable, Suspendable {
 
-	private final Time time = new Time();
-	private final Running running = new Running();
+	private final Engine.Timing timing = new Timing();
+	private final Engine.Running running = new Running();
 	private final Thread thread = new Thread( running );
 
 	private volatile boolean active = false, suspended = false;
-	private volatile float refresh = -1;
+	private volatile float refreshrate = -1;
 
 	private final TargetManager manager = new TargetManager();
-	private final Set<EngineStateListener> stateListeners = new HashSet<>();
 	private final Stack<Runnable> preCycleTasks = new Stack<>();
+	private final Set<EngineStateListener> stateListeners = new HashSet<>();
+	private final Set<EngineThreadListener> threadListeners = new HashSet<>();
 
 	@Override
 	public synchronized void start() {
-		if (!isActive()) {
+		if ( !isActive() && !thread.isAlive() ) {
 			active = true;
 			thread.start();
 		}
@@ -43,32 +45,40 @@ public class Engine implements Resetable, Startable, Suspendable {
 
 	@Override
 	public synchronized void suspend() {
-		preCycleTasks.push( () -> stateListeners.forEach( EngineStateListener::engineSuspending ) );
-		suspended = true;
-		preCycleTasks.push( () -> stateListeners.forEach( EngineStateListener::engineSuspended ) );
+		preCycleTasks.push( () -> {
+			stateListeners.forEach( EngineStateListener::onEngineSuspend );
+			suspended = true;
+		} );
 	}
 
 	@Override
 	public synchronized void resume() {
-		preCycleTasks.push( () -> stateListeners.forEach( EngineStateListener::engineResuming ) );
-		suspended = false;
-		preCycleTasks.push( () -> stateListeners.forEach( EngineStateListener::engineResumed ) );
+		preCycleTasks.push( () -> {
+			stateListeners.forEach( EngineStateListener::onEngineResume );
+			suspended = false;
+		} );
 	}
 
 	@Override
 	public void reset() {
-		preCycleTasks.push( () -> manager.reset() );
+		preCycleTasks.push( () -> {
+			manager.reset();
+		} );
 	}
 
 	public synchronized void forceTick() {
-		running.omega++;
+		preCycleTasks.push( () -> {
+			running.omega++;
+		} );
 	}
 
 	public synchronized void forceRender() {
-		running.renderable = true;
+		preCycleTasks.push( () -> {
+			running.renderable = true;
+		} );
 	}
 
-	private final class Time {
+	private final class Timing {
 
 		private volatile long lasttime = 0; // time when engine last ticked over
 		private volatile long delta = 0; // time taken for the last tick sequence
@@ -93,38 +103,33 @@ public class Engine implements Resetable, Startable, Suspendable {
 		@Override
 		public void run() {
 
-			stateListeners.forEach( EngineStateListener::engineStarting );
+			threadListeners.forEach( EngineThreadListener::enginePreInitialisationTask );
 			init();
-			stateListeners.forEach( EngineStateListener::engineStarted );
+			threadListeners.forEach( EngineThreadListener::enginePostInitialisationTask );
 
-			while (isActive()) {
+			while ( isActive() ) {
 
-				time.tick();
-				runCycleTasks();
-				if (!isSuspended()) omega += (refresh < 0) ? 1 : time.getDelta() * refresh / 1e9;
+				timing.tick();
+				while ( !preCycleTasks.isEmpty() ) preCycleTasks.pop().run();
+				if ( !isSuspended() ) omega += ( refreshrate < 0 ) ? 1 : timing.getDelta() * refreshrate / 1e9;
 
-				while (omega >= 1) {
+				while ( omega >= 1 ) {
 					omega--;
 					renderable = true;
 					tick();
 				}
 
-				if (renderable) {
+				if ( renderable ) {
 					renderable = false;
 					render();
 				}
 
 			}
 
-			stateListeners.forEach( EngineStateListener::engineStopping );
-			runCycleTasks();
+			threadListeners.forEach( EngineThreadListener::enginePreDisposalTask );
 			dispose();
-			stateListeners.forEach( EngineStateListener::engineStopped );
+			threadListeners.forEach( EngineThreadListener::enginePostDisposalTask );
 
-		}
-
-		private void runCycleTasks() {
-			while (!preCycleTasks.isEmpty()) preCycleTasks.pop().run();
 		}
 
 		private void init() {
@@ -145,18 +150,12 @@ public class Engine implements Resetable, Startable, Suspendable {
 
 	}
 
-	public Time getTime() {
-		return time;
+	public Timing getTiming() {
+		return timing;
 	}
 
 	public TargetManager getTargetManager() {
 		return manager;
-	}
-
-	public void pushPreCycleTasks( Runnable... tasks ) {
-		for ( Runnable task : tasks ) {
-			preCycleTasks.push( task );
-		}
 	}
 
 	public void addStateListener( EngineStateListener... listeners ) {
@@ -165,6 +164,18 @@ public class Engine implements Resetable, Startable, Suspendable {
 
 	public void removeStateListener( EngineStateListener... listeners ) {
 		stateListeners.removeAll( Arrays.asList( listeners ) );
+	}
+
+	public void addThreadListener( EngineThreadListener... listeners ) {
+		threadListeners.addAll( Arrays.asList( listeners ) );
+	}
+
+	public void removeThreadListener( EngineThreadListener... listeners ) {
+		threadListeners.addAll( Arrays.asList( listeners ) );
+	}
+
+	public boolean isAlive() {
+		return thread.isAlive();
 	}
 
 	@Override
@@ -178,11 +189,11 @@ public class Engine implements Resetable, Startable, Suspendable {
 	}
 
 	public float getRefreshRate() {
-		return refresh;
+		return refreshrate;
 	}
 
-	public void setRefreshRate( float refresh ) {
-		this.refresh = refresh;
+	public void setRefreshRate( float refreshrate ) {
+		this.refreshrate = refreshrate;
 	}
 
 }
