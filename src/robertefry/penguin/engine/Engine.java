@@ -115,16 +115,16 @@ public class Engine implements Resetable, Startable, Suspendable {
 				while ( !preCycleTasks.isEmpty() ) preCycleTasks.pop().run();
 				if ( !isSuspended() ) omega += ( refreshrate < 0 ) ? 1 : timing.getDelta() * refreshrate / 1e9;
 
-				logicListeners.forEach( EngineLogicListener::onEngineTick );
 				while ( omega >= 1 ) {
-					omega--;
 					renderable = true;
+					logicListeners.forEach( EngineLogicListener::onEngineTick );
+					omega--;
 					tick();
 				}
 
-				logicListeners.forEach( EngineLogicListener::onEngineRender );
 				if ( renderable ) {
 					renderable = false;
+					logicListeners.forEach( EngineLogicListener::onEngineRender );
 					render();
 				}
 
