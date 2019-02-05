@@ -162,6 +162,14 @@ public class Engine implements Resetable, Startable, Suspendable {
 		return manager;
 	}
 
+	public void addPreCycleTask( Runnable... tasks ) {
+		preCycleTasks.addAll( Arrays.asList( tasks ) );
+	}
+
+	public void removePreCycleTask( Runnable... tasks ) {
+		preCycleTasks.removeAll( Arrays.asList( tasks ) );
+	}
+
 	public void addStateListener( EngineStateListener... listeners ) {
 		stateListeners.addAll( Arrays.asList( listeners ) );
 	}
