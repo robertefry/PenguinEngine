@@ -43,24 +43,14 @@ public class Target implements Targetable {
 		targets.forEach( target -> target.reset() );
 	}
 
-	public < T extends Targetable > void addSubTarget( T target ) {
-		this.targets.add( target );
+	public void addSubTarget( Targetable... targets ) {
+		for ( Targetable target : targets )
+			this.targets.add( target );
 	}
 
-	public < T extends Targetable > void removeSubTarget( T target ) {
-		this.targets.remove( target );
-	}
-
-	public < T extends Targetable > void addSubTargets( T[] targets ) {
-		for ( Targetable target : targets ) {
-			addSubTarget( target );
-		}
-	}
-
-	public < T extends Targetable > void removeSubTargets( T[] targets ) {
-		for ( Targetable target : targets ) {
-			removeSubTarget( target );
-		}
+	public void removeSubTarget( Targetable... targets ) {
+		for ( Targetable target : targets )
+			this.targets.remove( target );
 	}
 
 }
