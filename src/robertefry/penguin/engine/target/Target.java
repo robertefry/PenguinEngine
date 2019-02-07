@@ -17,31 +17,26 @@ public class Target implements Targetable {
 
 	@Override
 	public void init( Engine engine ) {
-		Targetable.super.init( engine );
 		targets.forEach( target -> target.init( engine ) );
 	}
 
 	@Override
 	public void dispose( Engine engine ) {
-		Targetable.super.dispose( engine );
 		targets.forEach( target -> target.dispose( engine ) );
 	}
 
 	@Override
 	public void tick( Engine engine ) {
-		Targetable.super.tick( engine );
 		targets.forEach( target -> target.tick( engine ) );
 	}
 
 	@Override
 	public void render( Engine engine ) {
-		Targetable.super.render( engine );
 		targets.forEach( target -> target.render( engine ) );
 	}
 
 	@Override
 	public void reset() {
-		Targetable.super.reset();
 		targets.forEach( target -> target.reset() );
 	}
 

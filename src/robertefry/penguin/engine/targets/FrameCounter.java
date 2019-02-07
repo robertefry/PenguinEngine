@@ -24,7 +24,6 @@ public class FrameCounter extends SimpleCounter {
 
 	@Override
 	public void init( Engine engine ) {
-		super.init( engine );
 		lasttime = System.currentTimeMillis();
 	}
 

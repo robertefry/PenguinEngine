@@ -10,19 +10,14 @@ import robertefry.penguin.engine.core.Resetable;
  */
 public interface Targetable extends Resetable {
 
-	default void init( Engine engine ) {
-	}
+	public void init( Engine engine );
 
-	default void dispose( Engine engine ) {
-	}
+	public void dispose( Engine engine );
 
-	default void tick( Engine engine ) {
-	}
+	public void tick( Engine engine );
 
-	default void render( Engine engine ) {
-	}
-	
-	default void reset() {
-	}
+	public void render( Engine engine );
+
+	public void reset();
 
 }
