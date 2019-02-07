@@ -1,6 +1,7 @@
 
 package robertefry.penguin.engine.target;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import robertefry.penguin.engine.Engine;
@@ -43,14 +44,20 @@ public class Target implements Targetable {
 		targets.forEach( target -> target.reset() );
 	}
 
-	public void addSubTarget( Targetable... targets ) {
-		for ( Targetable target : targets )
-			this.targets.add( target );
+	public void addSubTarget( Targetable target ) {
+		this.targets.add( target );
 	}
 
-	public void removeSubTarget( Targetable... targets ) {
-		for ( Targetable target : targets )
-			this.targets.remove( target );
+	public < T extends Targetable > void addSubTargets( T[] targets ) {
+		this.targets.addAll( Arrays.asList( targets ) );
+	}
+
+	public void removeSubTarget( Targetable target ) {
+		this.targets.remove( target );
+	}
+
+	public < T extends Targetable > void removeSubTargets( T[] targets ) {
+		this.targets.removeAll( Arrays.asList( targets ) );
 	}
 
 }
