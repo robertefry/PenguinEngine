@@ -2,6 +2,7 @@
 package robertefry.penguin.engine.target;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import robertefry.penguin.engine.Engine;
@@ -52,12 +53,20 @@ public class Target implements Targetable {
 		this.targets.addAll( Arrays.asList( targets ) );
 	}
 
+	public < T extends Targetable > void addSubTargets( Collection<T> targets ) {
+		this.targets.addAll( targets );
+	}
+
 	public void removeSubTarget( Targetable target ) {
 		this.targets.remove( target );
 	}
 
 	public < T extends Targetable > void removeSubTargets( T[] targets ) {
 		this.targets.removeAll( Arrays.asList( targets ) );
+	}
+
+	public < T extends Targetable > void removeSubTargets( Collection<T> targets ) {
+		this.targets.removeAll( targets );
 	}
 
 }
