@@ -2,7 +2,7 @@
 package robertefry.penguin.test;
 
 import robertefry.penguin.engine.Engine;
-import robertefry.penguin.engine.targets.FrameCounter;
+import robertefry.penguin.targets.FrameCounter;
 
 /**
  * @author Robert E Fry

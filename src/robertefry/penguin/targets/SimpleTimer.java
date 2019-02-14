@@ -1,5 +1,5 @@
 
-package robertefry.penguin.engine.targets;
+package robertefry.penguin.targets;
 
 import java.util.function.Supplier;
 import robertefry.penguin.engine.Engine;

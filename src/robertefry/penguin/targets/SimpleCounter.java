@@ -1,5 +1,5 @@
 
-package robertefry.penguin.engine.targets;
+package robertefry.penguin.targets;
 
 import robertefry.penguin.engine.Engine;
 import robertefry.penguin.engine.target.TargetAdapter;

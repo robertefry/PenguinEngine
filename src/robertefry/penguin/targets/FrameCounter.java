@@ -1,5 +1,5 @@
 
-package robertefry.penguin.engine.targets;
+package robertefry.penguin.targets;
 
 import java.io.IOException;
 import java.io.OutputStream;
