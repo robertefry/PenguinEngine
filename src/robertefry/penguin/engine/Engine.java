@@ -12,6 +12,7 @@ import robertefry.penguin.engine.listener.EngineLogicListener;
 import robertefry.penguin.engine.listener.EngineStateListener;
 import robertefry.penguin.engine.listener.EngineThreadListener;
 import robertefry.penguin.engine.target.TargetManager;
+import robertefry.penguin.input.InputReciever;
 
 /**
  * @author Robert E Fry
@@ -27,10 +28,11 @@ public class Engine implements Resetable, Startable, Suspendable {
 	private volatile float refreshrate = -1;
 
 	private final TargetManager manager = new TargetManager();
-	private final Stack<Runnable> preCycleTasks = new Stack<>();
-	private final Set<EngineStateListener> stateListeners = new HashSet<>();
-	private final Set<EngineThreadListener> threadListeners = new HashSet<>();
-	private final Set<EngineLogicListener> logicListeners = new HashSet<>();
+	private final Stack< Runnable > preCycleTasks = new Stack<>();
+	private final Set< EngineStateListener > stateListeners = new HashSet<>();
+	private final Set< EngineThreadListener > threadListeners = new HashSet<>();
+	private final Set< EngineLogicListener > logicListeners = new HashSet<>();
+	private final Set< InputReciever > inputRecievers = new HashSet<>();
 
 	@Override
 	public synchronized void start() {
@@ -119,7 +121,9 @@ public class Engine implements Resetable, Startable, Suspendable {
 					renderable = true;
 					logicListeners.forEach( EngineLogicListener::preTick );
 					omega--;
+					pollInput();
 					tick();
+					inputRecievers.forEach( InputReciever::tick );
 					logicListeners.forEach( EngineLogicListener::postTick );
 				}
 
@@ -144,6 +148,10 @@ public class Engine implements Resetable, Startable, Suspendable {
 
 		private void dispose() {
 			manager.dispose( Engine.this );
+		}
+
+		private void pollInput() {
+			manager.pollInput( Engine.this );
 		}
 
 		private void tick() {
@@ -194,6 +202,14 @@ public class Engine implements Resetable, Startable, Suspendable {
 
 	public void removeLogicListener( EngineLogicListener... listeners ) {
 		logicListeners.removeAll( Arrays.asList( listeners ) );
+	}
+
+	public void syncInputReciever( InputReciever reciever ) {
+		inputRecievers.add( reciever );
+	}
+
+	public void unsyncInputReciever( InputReciever reciever ) {
+		inputRecievers.remove( reciever );
 	}
 
 	public boolean isAlive() {

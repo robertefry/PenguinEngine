@@ -14,6 +14,8 @@ public interface Targetable extends Resetable {
 
 	public void dispose( Engine engine );
 
+	public void pollInput( Engine engine );
+
 	public void tick( Engine engine );
 
 	public void render( Engine engine );

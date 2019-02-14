@@ -18,6 +18,10 @@ public interface TargetAdapter extends Targetable {
 	}
 
 	@Override
+	default void pollInput( Engine engine ) {
+	}
+
+	@Override
 	default void tick( Engine engine ) {
 	}
 

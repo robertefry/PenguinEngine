@@ -13,7 +13,7 @@ import robertefry.penguin.engine.Engine;
  */
 public class Target implements Targetable {
 
-	protected final Set<Targetable> targets = new HashSet<>();
+	protected final Set< Targetable > targets = new HashSet<>();
 
 	@Override
 	public void init( Engine engine ) {
@@ -23,6 +23,11 @@ public class Target implements Targetable {
 	@Override
 	public void dispose( Engine engine ) {
 		targets.forEach( target -> target.dispose( engine ) );
+	}
+
+	@Override
+	public void pollInput( Engine engine ) {
+		targets.forEach( target -> target.pollInput( engine ) );
 	}
 
 	@Override
@@ -48,7 +53,7 @@ public class Target implements Targetable {
 		this.targets.addAll( Arrays.asList( targets ) );
 	}
 
-	public < T extends Targetable > void addSubTargets( Collection<T> targets ) {
+	public < T extends Targetable > void addSubTargets( Collection< T > targets ) {
 		this.targets.addAll( targets );
 	}
 
@@ -60,7 +65,7 @@ public class Target implements Targetable {
 		this.targets.removeAll( Arrays.asList( targets ) );
 	}
 
-	public < T extends Targetable > void removeSubTargets( Collection<T> targets ) {
+	public < T extends Targetable > void removeSubTargets( Collection< T > targets ) {
 		this.targets.removeAll( targets );
 	}
 
