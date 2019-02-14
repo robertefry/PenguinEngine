@@ -3,16 +3,16 @@ package robertefry.penguin.input.mouse;
 
 import java.awt.Component;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.concurrent.LinkedTransferQueue;
 import java.util.concurrent.TransferQueue;
-import javax.swing.event.MouseInputAdapter;
 import robertefry.penguin.input.InputReciever;
 
 /**
  * @author Robert E Fry
  * @date 14 Feb 2019
  */
-public class Button extends MouseInputAdapter implements InputReciever {
+public class Button implements InputReciever, MouseListener {
 
 	private final int code;
 
@@ -27,8 +27,6 @@ public class Button extends MouseInputAdapter implements InputReciever {
 	@Override
 	public void register( Component component ) {
 		component.addMouseListener( this );
-		component.addMouseMotionListener( this );
-		component.addMouseWheelListener( this );
 	}
 
 	@Override
@@ -57,6 +55,16 @@ public class Button extends MouseInputAdapter implements InputReciever {
 			buttonClickEventQueue.put( e );
 		} catch ( InterruptedException e1 ) {
 		}
+	}
+
+	@Override
+	@Deprecated
+	public void mouseEntered( MouseEvent e ) {
+	}
+
+	@Override
+	@Deprecated
+	public void mouseExited( MouseEvent e ) {
 	}
 
 	public int getCode() {

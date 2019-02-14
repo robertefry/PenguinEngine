@@ -16,8 +16,9 @@ import robertefry.penguin.input.InputReciever;
  */
 public class Keyboard implements KeyListener, InputReciever {
 
-	private final Set< KeyListener > keyListeners = new HashSet<>();
 	private final Map< Integer, Key > keys = new HashMap<>();
+
+	private final Set< KeyListener > keyListeners = new HashSet<>();
 
 	@Override
 	public void register( Component component ) {
