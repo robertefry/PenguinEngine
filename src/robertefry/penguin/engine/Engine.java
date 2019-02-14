@@ -107,9 +107,7 @@ public class Engine implements Resetable, Startable, Suspendable {
 		@Override
 		public void run() {
 
-			threadListeners.forEach( EngineThreadListener::preInitialisationTask );
 			init();
-			threadListeners.forEach( EngineThreadListener::postInitialisationTask );
 
 			while ( isActive() ) {
 
@@ -120,48 +118,50 @@ public class Engine implements Resetable, Startable, Suspendable {
 				while ( omega >= 1 ) {
 					renderable = true;
 					omega--;
-					logicListeners.forEach( EngineLogicListener::prePollInput );
 					pollInput();
-					logicListeners.forEach( EngineLogicListener::postPollInput );
-					logicListeners.forEach( EngineLogicListener::preTick );
 					tick();
-					inputRecievers.forEach( InputReciever::tick );
-					logicListeners.forEach( EngineLogicListener::postTick );
 				}
 
 				if ( renderable ) {
 					renderable = false;
-					logicListeners.forEach( EngineLogicListener::preRender );
 					render();
-					logicListeners.forEach( EngineLogicListener::postRender );
 				}
 
 			}
 
-			threadListeners.forEach( EngineThreadListener::preDisposalTask );
 			dispose();
-			threadListeners.forEach( EngineThreadListener::postDisposalTask );
 
 		}
 
 		private void init() {
+			threadListeners.forEach( EngineThreadListener::preInitialisationTask );
 			manager.init( Engine.this );
+			threadListeners.forEach( EngineThreadListener::postInitialisationTask );
 		}
 
 		private void dispose() {
+			threadListeners.forEach( EngineThreadListener::preDisposalTask );
 			manager.dispose( Engine.this );
+			threadListeners.forEach( EngineThreadListener::postDisposalTask );
 		}
 
 		private void pollInput() {
+			logicListeners.forEach( EngineLogicListener::prePollInput );
 			manager.pollInput( Engine.this );
+			logicListeners.forEach( EngineLogicListener::postPollInput );
 		}
 
 		private void tick() {
+			logicListeners.forEach( EngineLogicListener::preTick );
 			manager.tick( Engine.this );
+			inputRecievers.forEach( InputReciever::tick );
+			logicListeners.forEach( EngineLogicListener::postTick );
 		}
 
 		private void render() {
+			logicListeners.forEach( EngineLogicListener::preRender );
 			manager.render( Engine.this );
+			logicListeners.forEach( EngineLogicListener::postRender );
 		}
 
 	}
