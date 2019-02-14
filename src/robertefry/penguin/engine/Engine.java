@@ -48,7 +48,7 @@ public class Engine implements Resetable, Startable, Suspendable {
 	@Override
 	public synchronized void suspend() {
 		preCycleTasks.push( () -> {
-			stateListeners.forEach( EngineStateListener::onEngineSuspend );
+			stateListeners.forEach( EngineStateListener::onSuspend );
 			suspended = true;
 		} );
 	}
@@ -56,7 +56,7 @@ public class Engine implements Resetable, Startable, Suspendable {
 	@Override
 	public synchronized void resume() {
 		preCycleTasks.push( () -> {
-			stateListeners.forEach( EngineStateListener::onEngineResume );
+			stateListeners.forEach( EngineStateListener::onResume );
 			suspended = false;
 		} );
 	}
@@ -105,9 +105,9 @@ public class Engine implements Resetable, Startable, Suspendable {
 		@Override
 		public void run() {
 
-			threadListeners.forEach( EngineThreadListener::enginePreInitialisationTask );
+			threadListeners.forEach( EngineThreadListener::preInitialisationTask );
 			init();
-			threadListeners.forEach( EngineThreadListener::enginePostInitialisationTask );
+			threadListeners.forEach( EngineThreadListener::postInitialisationTask );
 
 			while ( isActive() ) {
 
@@ -117,22 +117,24 @@ public class Engine implements Resetable, Startable, Suspendable {
 
 				while ( omega >= 1 ) {
 					renderable = true;
-					logicListeners.forEach( EngineLogicListener::onEngineTick );
+					logicListeners.forEach( EngineLogicListener::preTick );
 					omega--;
 					tick();
+					logicListeners.forEach( EngineLogicListener::postTick );
 				}
 
 				if ( renderable ) {
 					renderable = false;
-					logicListeners.forEach( EngineLogicListener::onEngineRender );
+					logicListeners.forEach( EngineLogicListener::preRender );
 					render();
+					logicListeners.forEach( EngineLogicListener::postRender );
 				}
 
 			}
 
-			threadListeners.forEach( EngineThreadListener::enginePreDisposalTask );
+			threadListeners.forEach( EngineThreadListener::preDisposalTask );
 			dispose();
-			threadListeners.forEach( EngineThreadListener::enginePostDisposalTask );
+			threadListeners.forEach( EngineThreadListener::postDisposalTask );
 
 		}
 
