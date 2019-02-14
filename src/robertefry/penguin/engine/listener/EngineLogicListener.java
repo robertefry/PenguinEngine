@@ -7,16 +7,28 @@ package robertefry.penguin.engine.listener;
  */
 public interface EngineLogicListener {
 	
-	public void prePollInput();
+	default void prePollInput() {
+	}
 	
-	public void postPollInput();
+	default void postPollInput() {
+	}
 
-	public void preTick();
+	default void preTick() {
+	}
 
-	public void postTick();
+	default void postTick() {
+	}
 
-	public void preRender();
+	default void preRender() {
+	}
 
-	public void postRender();
+	default void postRender() {
+	}
+	
+	default void preReset() {
+	}
+	
+	default void postReset() {
+	}
 
 }

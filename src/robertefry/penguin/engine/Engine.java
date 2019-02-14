@@ -28,6 +28,7 @@ public class Engine implements Resetable, Startable, Suspendable {
 	private volatile float refreshrate = -1;
 
 	private final TargetManager manager = new TargetManager();
+
 	private final Stack< Runnable > preCycleTasks = new Stack<>();
 	private final Set< EngineStateListener > stateListeners = new HashSet<>();
 	private final Set< EngineThreadListener > threadListeners = new HashSet<>();
@@ -66,7 +67,9 @@ public class Engine implements Resetable, Startable, Suspendable {
 	@Override
 	public void reset() {
 		preCycleTasks.push( () -> {
+			logicListeners.forEach( EngineLogicListener::preReset );
 			manager.reset();
+			logicListeners.forEach( EngineLogicListener::postReset );
 		} );
 	}
 

@@ -7,8 +7,10 @@ package robertefry.penguin.engine.listener;
  */
 public interface EngineStateListener {
 
-	public void onSuspend();
+	default void onSuspend() {
+	}
 
-	public void onResume();
+	default void onResume() {
+	}
 
 }

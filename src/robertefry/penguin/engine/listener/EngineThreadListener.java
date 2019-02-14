@@ -7,12 +7,16 @@ package robertefry.penguin.engine.listener;
  */
 public interface EngineThreadListener {
 
-	public void preInitialisationTask();
+	default void preInitialisationTask() {
+	}
 
-	public void postInitialisationTask();
+	default void postInitialisationTask() {
+	}
 
-	public void preDisposalTask();
+	default void preDisposalTask() {
+	}
 
-	public void postDisposalTask();
+	default void postDisposalTask() {
+	}
 
 }
