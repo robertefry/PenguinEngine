@@ -5,7 +5,9 @@ import java.awt.Component;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import robertefry.penguin.input.InputReciever;
 
 /**
@@ -14,6 +16,7 @@ import robertefry.penguin.input.InputReciever;
  */
 public class Keyboard implements KeyListener, InputReciever {
 
+	private final Set< KeyListener > keyListeners = new HashSet<>();
 	private final Map< Integer, Key > keys = new HashMap<>();
 
 	@Override
@@ -28,16 +31,19 @@ public class Keyboard implements KeyListener, InputReciever {
 
 	@Override
 	public void keyPressed( KeyEvent e ) {
+		keyListeners.forEach( listener -> listener.keyPressed( e ) );
 		getKey( e.getKeyCode() ).keyPressed( e );
 	}
 
 	@Override
 	public void keyReleased( KeyEvent e ) {
+		keyListeners.forEach( listener -> listener.keyReleased( e ) );
 		getKey( e.getKeyCode() ).keyReleased( e );
 	}
 
 	@Override
 	public void keyTyped( KeyEvent e ) {
+		keyListeners.forEach( listener -> listener.keyTyped( e ) );
 		getKey( e.getKeyCode() ).keyTyped( e );
 	}
 
@@ -48,6 +54,14 @@ public class Keyboard implements KeyListener, InputReciever {
 			keys.put( code, key );
 		}
 		return key;
+	}
+
+	public void addKeyListener( KeyListener listener ) {
+		keyListeners.add( listener );
+	}
+
+	public void removeKeyListener( KeyListener listener ) {
+		keyListeners.remove( listener );
 	}
 
 }
