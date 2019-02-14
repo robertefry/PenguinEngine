@@ -6,6 +6,10 @@ package robertefry.penguin.engine.listener;
  * @date 5 Feb 2019
  */
 public interface EngineLogicListener {
+	
+	public void prePollInput();
+	
+	public void postPollInput();
 
 	public void preTick();
 

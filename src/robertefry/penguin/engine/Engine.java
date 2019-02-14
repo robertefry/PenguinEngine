@@ -119,9 +119,11 @@ public class Engine implements Resetable, Startable, Suspendable {
 
 				while ( omega >= 1 ) {
 					renderable = true;
-					logicListeners.forEach( EngineLogicListener::preTick );
 					omega--;
+					logicListeners.forEach( EngineLogicListener::prePollInput );
 					pollInput();
+					logicListeners.forEach( EngineLogicListener::postPollInput );
+					logicListeners.forEach( EngineLogicListener::preTick );
 					tick();
 					inputRecievers.forEach( InputReciever::tick );
 					logicListeners.forEach( EngineLogicListener::postTick );
