@@ -8,6 +8,14 @@ package robertefry.penguin.engine.listener;
 public interface EngineLogicAdapter extends EngineLogicListener {
 
 	@Override
+	default void prePollInput() {
+	}
+
+	@Override
+	default void postPollInput() {
+	}
+
+	@Override
 	default void preTick() {
 	}
 
