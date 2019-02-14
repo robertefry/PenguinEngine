@@ -1,5 +1,5 @@
 
-package robertefry.penguin.input.mouse;
+package robertefry.penguin.input.mouse.listener;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
