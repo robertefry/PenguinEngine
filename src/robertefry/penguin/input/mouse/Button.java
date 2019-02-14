@@ -3,26 +3,22 @@ package robertefry.penguin.input.mouse;
 
 import java.awt.Component;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
-import javax.swing.event.MouseInputListener;
+import java.util.concurrent.LinkedTransferQueue;
+import java.util.concurrent.TransferQueue;
+import javax.swing.event.MouseInputAdapter;
 import robertefry.penguin.input.InputReciever;
 
 /**
  * @author Robert E Fry
  * @date 14 Feb 2019
  */
-public class Button implements InputReciever, MouseInputListener, MouseWheelListener {
+public class Button extends MouseInputAdapter implements InputReciever {
 
 	private final int code;
-	public MouseEvent eventClick = null;
-	public MouseEvent eventPress = null;
-	public MouseEvent eventRelease = null;
-	public MouseEvent eventEnter = null;
-	public MouseEvent eventExit = null;
-	public MouseEvent eventDrag = null;
-	public MouseEvent eventMove = null;
-	public MouseWheelEvent eventWheel = null;
+
+	private final TransferQueue< MouseEvent > buttonPressEventQueue = new LinkedTransferQueue<>();
+	private final TransferQueue< MouseEvent > buttonReleaseEventQueue = new LinkedTransferQueue<>();
+	private final TransferQueue< MouseEvent > buttonClickEventQueue = new LinkedTransferQueue<>();
 
 	public Button( int code ) {
 		this.code = code;
@@ -37,58 +33,46 @@ public class Button implements InputReciever, MouseInputListener, MouseWheelList
 
 	@Override
 	public void tick() {
-		eventClick = null;
-		eventPress = null;
-		eventRelease = null;
-		eventEnter = null;
-		eventExit = null;
-		eventDrag = null;
-		eventMove = null;
-		eventWheel = null;
-	}
-
-	@Override
-	public void mouseClicked( MouseEvent e ) {
-		eventClick = e;
 	}
 
 	@Override
 	public void mousePressed( MouseEvent e ) {
-		eventPress = e;
+		try {
+			buttonPressEventQueue.put( e );
+		} catch ( InterruptedException e1 ) {
+		}
 	}
 
 	@Override
 	public void mouseReleased( MouseEvent e ) {
-		eventRelease = e;
+		try {
+			buttonReleaseEventQueue.put( e );
+		} catch ( InterruptedException e1 ) {
+		}
 	}
 
 	@Override
-	public void mouseEntered( MouseEvent e ) {
-		eventEnter = e;
-	}
-
-	@Override
-	public void mouseExited( MouseEvent e ) {
-		eventExit = e;
-	}
-
-	@Override
-	public void mouseDragged( MouseEvent e ) {
-		eventDrag = e;
-	}
-
-	@Override
-	public void mouseMoved( MouseEvent e ) {
-		eventMove = e;
-	}
-
-	@Override
-	public void mouseWheelMoved( MouseWheelEvent e ) {
-		eventWheel = e;
+	public void mouseClicked( MouseEvent e ) {
+		try {
+			buttonClickEventQueue.put( e );
+		} catch ( InterruptedException e1 ) {
+		}
 	}
 
 	public int getCode() {
 		return code;
+	}
+
+	public MouseEvent pollButtonPressEventQueue() {
+		return buttonPressEventQueue.poll();
+	}
+
+	public MouseEvent pollButtonReleaseEventQueue() {
+		return buttonReleaseEventQueue.poll();
+	}
+
+	public MouseEvent pollButtonClickEventQueue() {
+		return buttonClickEventQueue.poll();
 	}
 
 }
