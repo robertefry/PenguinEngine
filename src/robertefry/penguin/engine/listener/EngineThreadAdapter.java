@@ -1,25 +1,26 @@
 
 package robertefry.penguin.engine.listener;
+
 /**
  * @author Robert E Fry
  * @date 14 Feb 2019
  */
-public class EngineThreadAdapter implements EngineThreadListener {
+public interface EngineThreadAdapter extends EngineThreadListener {
 
 	@Override
-	public void preInitialisationTask() {
+	default void preInitialisationTask() {
 	}
 
 	@Override
-	public void postInitialisationTask() {
+	default void postInitialisationTask() {
 	}
 
 	@Override
-	public void preDisposalTask() {
+	default void preDisposalTask() {
 	}
 
 	@Override
-	public void postDisposalTask() {
+	default void postDisposalTask() {
 	}
 
 }

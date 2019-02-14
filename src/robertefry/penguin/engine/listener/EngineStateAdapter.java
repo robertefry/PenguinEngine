@@ -1,17 +1,18 @@
 
 package robertefry.penguin.engine.listener;
+
 /**
  * @author Robert E Fry
  * @date 14 Feb 2019
  */
-public class EngineStateAdapter implements EngineStateListener {
+public interface EngineStateAdapter extends EngineStateListener {
 
 	@Override
-	public void onSuspend() {
+	default void onSuspend() {
 	}
 
 	@Override
-	public void onResume() {
+	default void onResume() {
 	}
 
 }

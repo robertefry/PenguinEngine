@@ -1,25 +1,26 @@
 
 package robertefry.penguin.engine.listener;
+
 /**
  * @author Robert E Fry
  * @date 14 Feb 2019
  */
-public class EngineLogicAdapter implements EngineLogicListener {
+public interface EngineLogicAdapter extends EngineLogicListener {
 
 	@Override
-	public void preTick() {
+	default void preTick() {
 	}
 
 	@Override
-	public void postTick() {
+	default void postTick() {
 	}
 
 	@Override
-	public void preRender() {
+	default void preRender() {
 	}
 
 	@Override
-	public void postRender() {
+	default void postRender() {
 	}
 
 }
