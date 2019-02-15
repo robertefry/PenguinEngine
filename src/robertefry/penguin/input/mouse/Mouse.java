@@ -92,51 +92,51 @@ public class Mouse implements InputReciever, MouseButtonListener, MouseActionLis
 		return button;
 	}
 
-	public void addButtonListener( MouseButtonListener buttonListener ) {
+	public void addMouseButtonListener( MouseButtonListener buttonListener ) {
 		mouseButtonListeners.add( buttonListener );
 	}
 
-	public < T extends MouseButtonListener > void addButtonListener( T[] buttonListeners ) {
+	public < T extends MouseButtonListener > void addMouseButtonListener( T[] buttonListeners ) {
 		mouseButtonListeners.addAll( Arrays.asList( buttonListeners ) );
 	}
 
-	public < T extends MouseButtonListener > void addButtonListener( Collection< T > buttonListeners ) {
+	public < T extends MouseButtonListener > void addMouseButtonListener( Collection< T > buttonListeners ) {
 		mouseButtonListeners.addAll( buttonListeners );
 	}
 
-	public void addActionListener( MouseActionListener actionListener ) {
+	public void addMouseActionListener( MouseActionListener actionListener ) {
 		mouseActionListeners.add( actionListener );
 	}
 
-	public < T extends MouseActionListener > void addActionListener( T[] actionListeners ) {
+	public < T extends MouseActionListener > void addMouseActionListener( T[] actionListeners ) {
 		mouseActionListeners.addAll( Arrays.asList( actionListeners ) );
 	}
 
-	public < T extends MouseActionListener > void addActionListener( Collection< T > actionListeners ) {
+	public < T extends MouseActionListener > void addMouseActionListener( Collection< T > actionListeners ) {
 		mouseActionListeners.addAll( actionListeners );
 	}
 
-	public void removeButtonListener( MouseButtonListener buttonListener ) {
+	public void removeMouseButtonListener( MouseButtonListener buttonListener ) {
 		mouseButtonListeners.remove( buttonListener );
 	}
 
-	public < T extends MouseButtonListener > void removeButtonListener( T[] buttonListeners ) {
+	public < T extends MouseButtonListener > void removeMouseButtonListener( T[] buttonListeners ) {
 		mouseButtonListeners.removeAll( Arrays.asList( buttonListeners ) );
 	}
 
-	public < T extends MouseButtonListener > void removeButtonListener( Collection< T > buttonListeners ) {
+	public < T extends MouseButtonListener > void removeMouseButtonListener( Collection< T > buttonListeners ) {
 		mouseButtonListeners.removeAll( buttonListeners );
 	}
 
-	public void removeActionListener( MouseActionListener actionListener ) {
+	public void removeMouseActionListener( MouseActionListener actionListener ) {
 		mouseActionListeners.remove( actionListener );
 	}
 
-	public < T extends MouseActionListener > void removeActionListener( T[] actionListeners ) {
+	public < T extends MouseActionListener > void removeMouseActionListener( T[] actionListeners ) {
 		mouseActionListeners.removeAll( Arrays.asList( actionListeners ) );
 	}
 
-	public < T extends MouseActionListener > void removeActionListener( Collection< T > actionListeners ) {
+	public < T extends MouseActionListener > void removeMouseActionListener( Collection< T > actionListeners ) {
 		mouseActionListeners.removeAll( actionListeners );
 	}
 
