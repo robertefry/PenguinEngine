@@ -3,42 +3,36 @@ package robertefry.penguin.input.mouse;
 
 import java.awt.Component;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.LinkedTransferQueue;
-import java.util.concurrent.TransferQueue;
+import javax.swing.event.MouseInputListener;
 import robertefry.penguin.input.InputReciever;
+import robertefry.penguin.input.mouse.listener.MouseActionListener;
+import robertefry.penguin.input.mouse.listener.MouseButtonListener;
 
 /**
  * @author Robert E Fry
  * @date 14 Feb 2019
  */
-public class Mouse implements InputReciever, MouseListener, MouseMotionListener, MouseWheelListener {
+public class Mouse implements InputReciever, MouseButtonListener, MouseActionListener {
 
 	private final Map< Integer, Button > buttons = new HashMap<>();
+	private final InstanceListener listener = new InstanceListener();
 
-	private final Set< MouseListener > mouseButtonListeners = new HashSet<>();
-	private final Set< MouseListener > mouseEgressListeners = new HashSet<>();
-	private final Set< MouseMotionListener > mouseMotionListeners = new HashSet<>();
-	private final Set< MouseWheelListener > mouseWheelListeners = new HashSet<>();
-
-	private final TransferQueue< MouseEvent > mouseEnterEventQueue = new LinkedTransferQueue<>();
-	private final TransferQueue< MouseEvent > mouseExitEventQueue = new LinkedTransferQueue<>();
-	private final TransferQueue< MouseEvent > mouseMoveEventQueue = new LinkedTransferQueue<>();
-	private final TransferQueue< MouseEvent > mouseDragEventQueue = new LinkedTransferQueue<>();
-	private final TransferQueue< MouseWheelEvent > mouseWheelEventQueue = new LinkedTransferQueue<>();
+	private final Set< MouseButtonListener > mouseButtonListeners = new HashSet<>();
+	private final Set< MouseActionListener > mouseActionListeners = new HashSet<>();
 
 	@Override
 	public void register( Component component ) {
-		component.addMouseListener( this );
-		component.addMouseMotionListener( this );
-		component.addMouseWheelListener( this );
+		component.addMouseListener( listener );
+		component.addMouseMotionListener( listener );
+		component.addMouseWheelListener( listener );
 	}
 
 	@Override
@@ -47,66 +41,46 @@ public class Mouse implements InputReciever, MouseListener, MouseMotionListener,
 	}
 
 	@Override
-	public void mouseClicked( MouseEvent e ) {
-		mouseButtonListeners.forEach( listener -> listener.mouseClicked( e ) );
-		getButton( e.getButton() ).mouseClicked( e );
+	public void onButtonPress( MouseEvent e ) {
+		getButton( e.getButton() ).onButtonPress( e );
+		mouseButtonListeners.forEach( listener -> listener.onButtonPress( e ) );
 	}
 
 	@Override
-	public void mousePressed( MouseEvent e ) {
-		mouseButtonListeners.forEach( listener -> listener.mousePressed( e ) );
-		getButton( e.getButton() ).mousePressed( e );
+	public void onButtonRelease( MouseEvent e ) {
+		getButton( e.getButton() ).onButtonRelease( e );
+		mouseButtonListeners.forEach( listener -> listener.onButtonRelease( e ) );
 	}
 
 	@Override
-	public void mouseReleased( MouseEvent e ) {
-		mouseButtonListeners.forEach( listener -> listener.mouseReleased( e ) );
-		getButton( e.getButton() ).mouseReleased( e );
+	public void onButtonClick( MouseEvent e ) {
+		getButton( e.getButton() ).onButtonClick( e );
+		mouseButtonListeners.forEach( listener -> listener.onButtonClick( e ) );
 	}
 
 	@Override
-	public void mouseEntered( MouseEvent e ) {
-		mouseEgressListeners.forEach( listener -> listener.mouseEntered( e ) );
-		try {
-			mouseEnterEventQueue.put( e );
-		} catch ( InterruptedException e1 ) {
-		}
+	public void onMouseEnter( MouseEvent e ) {
+		mouseActionListeners.forEach( listener -> listener.onMouseEnter( e ) );
 	}
 
 	@Override
-	public void mouseExited( MouseEvent e ) {
-		mouseEgressListeners.forEach( listener -> listener.mouseExited( e ) );
-		try {
-			mouseExitEventQueue.put( e );
-		} catch ( InterruptedException e1 ) {
-		}
+	public void onMouseExit( MouseEvent e ) {
+		mouseActionListeners.forEach( listener -> listener.onMouseExit( e ) );
 	}
 
 	@Override
-	public void mouseMoved( MouseEvent e ) {
-		mouseMotionListeners.forEach( listener -> listener.mouseMoved( e ) );
-		try {
-			mouseMoveEventQueue.put( e );
-		} catch ( InterruptedException e1 ) {
-		}
+	public void onMouseMove( MouseEvent e ) {
+		mouseActionListeners.forEach( listener -> listener.onMouseMove( e ) );
 	}
 
 	@Override
-	public void mouseDragged( MouseEvent e ) {
-		mouseMotionListeners.forEach( listener -> listener.mouseDragged( e ) );
-		try {
-			mouseDragEventQueue.put( e );
-		} catch ( InterruptedException e1 ) {
-		}
+	public void onMouseDrag( MouseEvent e ) {
+		mouseActionListeners.forEach( listener -> listener.onMouseDrag( e ) );
 	}
 
 	@Override
-	public void mouseWheelMoved( MouseWheelEvent e ) {
-		mouseWheelListeners.forEach( listener -> listener.mouseWheelMoved( e ) );
-		try {
-			mouseWheelEventQueue.put( e );
-		} catch ( InterruptedException e1 ) {
-		}
+	public void onWheelAction( MouseWheelEvent e ) {
+		mouseActionListeners.forEach( listener -> listener.onWheelAction( e ) );
 	}
 
 	public Button getButton( int code ) {
@@ -118,56 +92,96 @@ public class Mouse implements InputReciever, MouseListener, MouseMotionListener,
 		return button;
 	}
 
-	public MouseEvent pollMouseEnterEventQueue() {
-		return mouseEnterEventQueue.poll();
+	public void addButtonListener( MouseButtonListener buttonListener ) {
+		mouseButtonListeners.add( buttonListener );
 	}
 
-	public MouseEvent pollMouseExitEventQueue() {
-		return mouseExitEventQueue.poll();
+	public < T extends MouseButtonListener > void addButtonListener( T[] buttonListeners ) {
+		mouseButtonListeners.addAll( Arrays.asList( buttonListeners ) );
 	}
 
-	public MouseEvent pollMouseMoveEventQueue() {
-		return mouseMoveEventQueue.poll();
+	public < T extends MouseButtonListener > void addButtonListener( Collection< T > buttonListeners ) {
+		mouseButtonListeners.addAll( buttonListeners );
 	}
 
-	public MouseEvent pollMouseDragEventQueue() {
-		return mouseDragEventQueue.poll();
+	public void addActionListener( MouseActionListener actionListener ) {
+		mouseActionListeners.add( actionListener );
 	}
 
-	public MouseEvent pollMouseWheelEventQueue() {
-		return mouseWheelEventQueue.poll();
+	public < T extends MouseActionListener > void addActionListener( T[] actionListeners ) {
+		mouseActionListeners.addAll( Arrays.asList( actionListeners ) );
 	}
 
-	public void addMouseButtonListener( MouseListener listener ) {
-		mouseButtonListeners.add( listener );
+	public < T extends MouseActionListener > void addActionListener( Collection< T > actionListeners ) {
+		mouseActionListeners.addAll( actionListeners );
 	}
 
-	public void removeMouseButtonListener( MouseListener listener ) {
-		mouseButtonListeners.remove( listener );
+	public void removeButtonListener( MouseButtonListener buttonListener ) {
+		mouseButtonListeners.remove( buttonListener );
 	}
 
-	public void addMouseEgressListener( MouseListener listener ) {
-		mouseEgressListeners.add( listener );
+	public < T extends MouseButtonListener > void removeButtonListener( T[] buttonListeners ) {
+		mouseButtonListeners.removeAll( Arrays.asList( buttonListeners ) );
 	}
 
-	public void removeMouseEgressListener( MouseListener listener ) {
-		mouseEgressListeners.remove( listener );
+	public < T extends MouseButtonListener > void removeButtonListener( Collection< T > buttonListeners ) {
+		mouseButtonListeners.removeAll( buttonListeners );
 	}
 
-	public void addMouseMotionListener( MouseMotionListener listener ) {
-		mouseMotionListeners.add( listener );
+	public void removeActionListener( MouseActionListener actionListener ) {
+		mouseActionListeners.remove( actionListener );
 	}
 
-	public void removeMouseMotionListener( MouseMotionListener listener ) {
-		mouseMotionListeners.remove( listener );
+	public < T extends MouseActionListener > void removeActionListener( T[] actionListeners ) {
+		mouseActionListeners.removeAll( Arrays.asList( actionListeners ) );
 	}
 
-	public void addMouseWheelListener( MouseWheelListener listener ) {
-		mouseWheelListeners.add( listener );
+	public < T extends MouseActionListener > void removeActionListener( Collection< T > actionListeners ) {
+		mouseActionListeners.removeAll( actionListeners );
 	}
 
-	public void removeMouseWheelListener( MouseWheelListener listener ) {
-		mouseWheelListeners.remove( listener );
+	private final class InstanceListener implements MouseInputListener, MouseWheelListener {
+
+		@Override
+		public void mousePressed( MouseEvent e ) {
+			onButtonPress( e );
+		}
+
+		@Override
+		public void mouseReleased( MouseEvent e ) {
+			onButtonRelease( e );
+		}
+
+		@Override
+		public void mouseClicked( MouseEvent e ) {
+			onButtonClick( e );
+		}
+
+		@Override
+		public void mouseEntered( MouseEvent e ) {
+			onMouseEnter( e );
+		}
+
+		@Override
+		public void mouseExited( MouseEvent e ) {
+			onMouseExit( e );
+		}
+
+		@Override
+		public void mouseDragged( MouseEvent e ) {
+			onMouseDrag( e );
+		}
+
+		@Override
+		public void mouseMoved( MouseEvent e ) {
+			onMouseMove( e );
+		}
+
+		@Override
+		public void mouseWheelMoved( MouseWheelEvent e ) {
+			onWheelAction( e );
+		}
+
 	}
 
 }

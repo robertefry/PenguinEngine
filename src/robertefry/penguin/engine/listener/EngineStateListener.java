@@ -5,12 +5,10 @@ package robertefry.penguin.engine.listener;
  * @author Robert E Fry
  * @date 4 Feb 2019
  */
-public interface EngineStateListener {
+public interface EngineStateListener extends EngineListener {
 
-	default void onSuspend() {
-	}
+	public void onSuspend();
 
-	default void onResume() {
-	}
+	public void onResume();
 
 }

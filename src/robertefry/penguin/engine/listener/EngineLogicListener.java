@@ -5,30 +5,22 @@ package robertefry.penguin.engine.listener;
  * @author Robert E Fry
  * @date 5 Feb 2019
  */
-public interface EngineLogicListener {
-	
-	default void prePollInput() {
-	}
-	
-	default void postPollInput() {
-	}
+public interface EngineLogicListener extends EngineListener {
 
-	default void preTick() {
-	}
+	public void prePollInput();
 
-	default void postTick() {
-	}
+	public void postPollInput();
 
-	default void preRender() {
-	}
+	public void preTick();
 
-	default void postRender() {
-	}
-	
-	default void preReset() {
-	}
-	
-	default void postReset() {
-	}
+	public void postTick();
+
+	public void preRender();
+
+	public void postRender();
+
+	public void preReset();
+
+	public void postReset();
 
 }

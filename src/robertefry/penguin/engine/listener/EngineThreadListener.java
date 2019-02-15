@@ -5,18 +5,14 @@ package robertefry.penguin.engine.listener;
  * @author Robert E Fry
  * @date 5 Feb 2019
  */
-public interface EngineThreadListener {
+public interface EngineThreadListener extends EngineListener {
 
-	default void preInitialisationTask() {
-	}
+	public void preInitialisationTask();
 
-	default void postInitialisationTask() {
-	}
+	public void postInitialisationTask();
 
-	default void preDisposalTask() {
-	}
+	public void preDisposalTask();
 
-	default void postDisposalTask() {
-	}
+	public void postDisposalTask();
 
 }

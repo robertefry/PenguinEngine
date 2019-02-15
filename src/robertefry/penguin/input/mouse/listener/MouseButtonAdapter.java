@@ -5,20 +5,20 @@ import java.awt.event.MouseEvent;
 
 /**
  * @author Robert E Fry
- * @date 14 Feb 2019
+ * @date 15 Feb 2019
  */
-public interface MouseButtonAdapter extends MouseButtonListener {
+public class MouseButtonAdapter implements MouseButtonListener {
 
 	@Override
-	default void mouseClicked( MouseEvent e ) {
+	public void onButtonPress( MouseEvent e ) {
 	}
 
 	@Override
-	default void mousePressed( MouseEvent e ) {
+	public void onButtonRelease( MouseEvent e ) {
 	}
 
 	@Override
-	default void mouseReleased( MouseEvent e ) {
+	public void onButtonClick( MouseEvent e ) {
 	}
 
 }

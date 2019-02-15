@@ -2,22 +2,18 @@
 package robertefry.penguin.input.mouse.listener;
 
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.util.EventListener;
 
 /**
  * @author Robert E Fry
  * @date 14 Feb 2019
  */
-public interface MouseButtonListener extends MouseListener {
+public interface MouseButtonListener extends EventListener {
 
-	@Override
-	@Deprecated
-	default void mouseEntered( MouseEvent e ) {
-	}
+	public void onButtonPress( MouseEvent e );
 
-	@Override
-	@Deprecated
-	default void mouseExited( MouseEvent e ) {
-	}
+	public void onButtonRelease( MouseEvent e );
+
+	public void onButtonClick( MouseEvent e );
 
 }

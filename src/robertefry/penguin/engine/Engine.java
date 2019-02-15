@@ -19,6 +19,8 @@ import robertefry.penguin.input.InputReciever;
  * @date 22 Jan 2019
  */
 public class Engine implements Resetable, Startable, Suspendable {
+	
+	// TODO rename to PinguEngine or KawalskiEngine
 
 	private final Engine.Timing timing = new Timing();
 	private final Engine.Running running = new Running();
