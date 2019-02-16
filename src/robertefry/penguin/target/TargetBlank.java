@@ -5,7 +5,7 @@ package robertefry.penguin.target;
  * @author Robert E Fry
  * @date 7 Feb 2019
  */
-public class TargetAdapter implements Targetable {
+public class TargetBlank implements Targetable {
 
 	@Override
 	public void init() {

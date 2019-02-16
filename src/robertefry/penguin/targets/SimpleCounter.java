@@ -1,9 +1,9 @@
 
 package robertefry.penguin.targets;
 
-import robertefry.penguin.target.TargetAdapter;
+import robertefry.penguin.target.TargetBlank;
 
-public class SimpleCounter extends TargetAdapter {
+public class SimpleCounter extends TargetBlank {
 
 	private long count = 0;
 

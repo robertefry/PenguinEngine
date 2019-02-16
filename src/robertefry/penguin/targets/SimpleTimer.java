@@ -2,13 +2,13 @@
 package robertefry.penguin.targets;
 
 import java.util.function.Supplier;
-import robertefry.penguin.target.TargetAdapter;
+import robertefry.penguin.target.TargetBlank;
 
 /**
  * @author Robert E Fry
  * @date 4 Feb 2019
  */
-public class SimpleTimer extends TargetAdapter {
+public class SimpleTimer extends TargetBlank {
 
 	protected volatile long timePrecede, timeLast;
 	protected final Supplier< Long > timeSupplier;
