@@ -8,7 +8,7 @@ import java.util.Iterator;
  * @author Robert E Fry
  * @date 22 Jan 2019
  */
-public class TargetManager extends Target implements Targetable, Collection<Targetable> {
+public class TargetManager extends Target implements Collection< Targetable > {
 
 	@Override
 	public boolean add( Targetable arg0 ) {
@@ -16,7 +16,7 @@ public class TargetManager extends Target implements Targetable, Collection<Targ
 	}
 
 	@Override
-	public boolean addAll( Collection<? extends Targetable> arg0 ) {
+	public boolean addAll( Collection< ? extends Targetable > arg0 ) {
 		return targets.addAll( arg0 );
 	}
 
@@ -31,7 +31,7 @@ public class TargetManager extends Target implements Targetable, Collection<Targ
 	}
 
 	@Override
-	public boolean containsAll( Collection<?> arg0 ) {
+	public boolean containsAll( Collection< ? > arg0 ) {
 		return targets.containsAll( arg0 );
 	}
 
@@ -41,7 +41,7 @@ public class TargetManager extends Target implements Targetable, Collection<Targ
 	}
 
 	@Override
-	public Iterator<Targetable> iterator() {
+	public Iterator< Targetable > iterator() {
 		return targets.iterator();
 	}
 
@@ -51,12 +51,12 @@ public class TargetManager extends Target implements Targetable, Collection<Targ
 	}
 
 	@Override
-	public boolean removeAll( Collection<?> arg0 ) {
+	public boolean removeAll( Collection< ? > arg0 ) {
 		return targets.removeAll( arg0 );
 	}
 
 	@Override
-	public boolean retainAll( Collection<?> arg0 ) {
+	public boolean retainAll( Collection< ? > arg0 ) {
 		return targets.retainAll( arg0 );
 	}
 

@@ -7,30 +7,30 @@ import robertefry.penguin.engine.Engine;
  * @author Robert E Fry
  * @date 7 Feb 2019
  */
-public interface TargetAdapter extends Targetable {
+public class TargetAdapter implements Targetable {
 
 	@Override
-	default void init( Engine engine ) {
+	public void init( Engine engine ) {
 	}
 
 	@Override
-	default void dispose( Engine engine ) {
+	public void dispose( Engine engine ) {
 	}
 
 	@Override
-	default void pollInput( Engine engine ) {
+	public void pollInput( Engine engine ) {
 	}
 
 	@Override
-	default void tick( Engine engine ) {
+	public void tick( Engine engine ) {
 	}
 
 	@Override
-	default void render( Engine engine ) {
+	public void render( Engine engine ) {
 	}
 
 	@Override
-	default void reset() {
+	public void reset() {
 	}
 
 }
