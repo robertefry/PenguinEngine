@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Stack;
-import robertefry.penguin.engine.core.Resetable;
+import robertefry.penguin.engine.api.Resetable;
 import robertefry.penguin.engine.core.Startable;
 import robertefry.penguin.engine.core.Suspendable;
 import robertefry.penguin.engine.listener.EngineLogicListener;
@@ -138,32 +138,32 @@ public class Engine implements Resetable, Startable, Suspendable {
 
 		private void init() {
 			threadListeners.forEach( EngineThreadListener::preInitialisationTask );
-			manager.init( Engine.this );
+			manager.init();
 			threadListeners.forEach( EngineThreadListener::postInitialisationTask );
 		}
 
 		private void dispose() {
 			threadListeners.forEach( EngineThreadListener::preDisposalTask );
-			manager.dispose( Engine.this );
+			manager.dispose();
 			threadListeners.forEach( EngineThreadListener::postDisposalTask );
 		}
 
 		private void pollInput() {
 			logicListeners.forEach( EngineLogicListener::prePollInput );
-			manager.pollInput( Engine.this );
+			manager.pollInput();
 			logicListeners.forEach( EngineLogicListener::postPollInput );
 		}
 
 		private void tick() {
 			logicListeners.forEach( EngineLogicListener::preTick );
-			manager.tick( Engine.this );
+			manager.update();
 			inputRecievers.forEach( InputReciever::tick );
 			logicListeners.forEach( EngineLogicListener::postTick );
 		}
 
 		private void render() {
 			logicListeners.forEach( EngineLogicListener::preRender );
-			manager.render( Engine.this );
+			manager.render();
 			logicListeners.forEach( EngineLogicListener::postRender );
 		}
 

@@ -4,7 +4,6 @@ package robertefry.penguin.targets;
 import java.io.IOException;
 import java.io.OutputStream;
 import org.apache.commons.logging.LogFactory;
-import robertefry.penguin.engine.Engine;
 
 /**
  * @author Robert E Fry
@@ -23,16 +22,15 @@ public class FrameCounter extends SimpleCounter {
 	}
 
 	@Override
-	public void init( Engine engine ) {
+	public void init() {
 		lasttime = System.currentTimeMillis();
 	}
 
 	@Override
-	public void tick( Engine engine ) {
-		super.tick( engine );
-
+	public void update() {
+		super.update();
 		long currenttime = System.currentTimeMillis();
-		if (currenttime - lasttime >= duration) {
+		if ( currenttime - lasttime >= duration ) {
 			lasttime = currenttime;
 			try {
 				out.write( String.format( "%s\n", getCount() ).getBytes() );
@@ -44,7 +42,6 @@ public class FrameCounter extends SimpleCounter {
 			}
 			reset();
 		}
-
 	}
 
 }

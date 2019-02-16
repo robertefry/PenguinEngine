@@ -2,14 +2,13 @@
 package robertefry.penguin.targets;
 
 import java.util.function.Supplier;
-import robertefry.penguin.engine.Engine;
-import robertefry.penguin.engine.target.Targetable;
+import robertefry.penguin.engine.target.TargetAdapter;
 
 /**
  * @author Robert E Fry
  * @date 4 Feb 2019
  */
-public class SimpleTimer implements Targetable {
+public class SimpleTimer extends TargetAdapter {
 
 	protected volatile long timePrecede, timeLast;
 	protected final Supplier< Long > timeSupplier;
@@ -23,30 +22,14 @@ public class SimpleTimer implements Targetable {
 	}
 
 	@Override
-	public synchronized void init( Engine engine ) {
+	public synchronized void init() {
 		timePrecede = timeLast = timeSupplier.get();
 	}
 
 	@Override
-	public void dispose( Engine engine ) {
-	}
-
-	@Override
-	public void pollInput( Engine engine ) {
-	}
-
-	@Override
-	public synchronized void tick( Engine engine ) {
+	public synchronized void update() {
 		timePrecede = timeLast;
 		timeLast = timeSupplier.get();
-	}
-
-	@Override
-	public void render( Engine engine ) {
-	}
-
-	@Override
-	public void reset() {
 	}
 
 	public synchronized long getTimePrecede() {

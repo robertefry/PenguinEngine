@@ -1,8 +1,6 @@
 
 package robertefry.penguin.engine.target;
 
-import robertefry.penguin.engine.Engine;
-
 /**
  * @author Robert E Fry
  * @date 7 Feb 2019
@@ -10,23 +8,23 @@ import robertefry.penguin.engine.Engine;
 public class TargetAdapter implements Targetable {
 
 	@Override
-	public void init( Engine engine ) {
+	public void init() {
 	}
 
 	@Override
-	public void dispose( Engine engine ) {
+	public void dispose() {
 	}
 
 	@Override
-	public void pollInput( Engine engine ) {
+	public void pollInput() {
 	}
 
 	@Override
-	public void tick( Engine engine ) {
+	public void update() {
 	}
 
 	@Override
-	public void render( Engine engine ) {
+	public void render() {
 	}
 
 	@Override

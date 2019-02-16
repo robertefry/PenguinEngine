@@ -1,25 +1,16 @@
 
 package robertefry.penguin.engine.target;
 
-import robertefry.penguin.engine.Engine;
-import robertefry.penguin.engine.core.Resetable;
+import robertefry.penguin.engine.api.Initializable;
+import robertefry.penguin.engine.api.Inputable;
+import robertefry.penguin.engine.api.Renderable;
+import robertefry.penguin.engine.api.Resetable;
+import robertefry.penguin.engine.api.Updatable;
 
 /**
  * @author Robert E Fry
  * @date 22 Jan 2019
  */
-public interface Targetable extends Resetable {
-
-	public void init( Engine engine );
-
-	public void dispose( Engine engine );
-
-	public void pollInput( Engine engine );
-
-	public void tick( Engine engine );
-
-	public void render( Engine engine );
-
-	public void reset();
+public interface Targetable extends Initializable, Inputable, Updatable, Renderable, Resetable {
 
 }

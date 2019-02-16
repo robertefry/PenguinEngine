@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import robertefry.penguin.engine.Engine;
 
 /**
  * @author Robert E Fry
@@ -16,28 +15,28 @@ public class Target implements Targetable {
 	protected final Set< Targetable > targets = new HashSet<>();
 
 	@Override
-	public void init( Engine engine ) {
-		targets.forEach( target -> target.init( engine ) );
+	public void init() {
+		targets.forEach( target -> target.init() );
 	}
 
 	@Override
-	public void dispose( Engine engine ) {
-		targets.forEach( target -> target.dispose( engine ) );
+	public void dispose() {
+		targets.forEach( target -> target.dispose() );
 	}
 
 	@Override
-	public void pollInput( Engine engine ) {
-		targets.forEach( target -> target.pollInput( engine ) );
+	public void pollInput() {
+		targets.forEach( target -> target.pollInput() );
 	}
 
 	@Override
-	public void tick( Engine engine ) {
-		targets.forEach( target -> target.tick( engine ) );
+	public void update() {
+		targets.forEach( target -> target.update() );
 	}
 
 	@Override
-	public void render( Engine engine ) {
-		targets.forEach( target -> target.render( engine ) );
+	public void render() {
+		targets.forEach( target -> target.render() );
 	}
 
 	@Override
