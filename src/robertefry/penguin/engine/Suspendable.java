@@ -1,5 +1,5 @@
 
-package robertefry.penguin.engine.core;
+package robertefry.penguin.engine;
 
 public interface Suspendable {
 

@@ -2,7 +2,7 @@
 package robertefry.penguin.targets;
 
 import java.util.function.Supplier;
-import robertefry.penguin.engine.target.TargetAdapter;
+import robertefry.penguin.target.TargetAdapter;
 
 /**
  * @author Robert E Fry

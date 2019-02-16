@@ -1,7 +1,7 @@
 
 package robertefry.penguin.targets;
 
-import robertefry.penguin.engine.target.TargetAdapter;
+import robertefry.penguin.target.TargetAdapter;
 
 public class SimpleCounter extends TargetAdapter {
 

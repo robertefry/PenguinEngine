@@ -5,14 +5,12 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Stack;
-import robertefry.penguin.engine.api.Resetable;
-import robertefry.penguin.engine.core.Startable;
-import robertefry.penguin.engine.core.Suspendable;
 import robertefry.penguin.engine.listener.EngineLogicListener;
 import robertefry.penguin.engine.listener.EngineStateListener;
 import robertefry.penguin.engine.listener.EngineThreadListener;
-import robertefry.penguin.engine.target.TargetManager;
 import robertefry.penguin.input.InputReciever;
+import robertefry.penguin.target.Resetable;
+import robertefry.penguin.target.TargetManager;
 
 /**
  * @author Robert E Fry
