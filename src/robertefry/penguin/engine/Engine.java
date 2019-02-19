@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import robertefry.penguin.engine.listener.EngineLogicListener;
 import robertefry.penguin.engine.listener.EngineStateListener;
 import robertefry.penguin.engine.listener.EngineThreadListener;
+import robertefry.penguin.engine.render.Renderer;
 import robertefry.penguin.input.EngineInputReciever;
 import robertefry.penguin.target.TargetManager;
 
@@ -23,11 +24,11 @@ public class Engine implements Startable, Suspendable {
 
 	private final Engine.Timing timing = new Timing();
 	private final Engine.Running running = new Running();
-	private final Thread thread = new Thread( running );
 
 	private volatile boolean active = false, suspended = false;
 	private volatile float refreshrate = -1;
 
+	private final Renderer renderer = new Renderer();
 	private final TargetManager targetManager = new TargetManager();
 
 	private final Queue< Runnable > preCycleTasks = new ConcurrentLinkedQueue<>();
@@ -36,9 +37,14 @@ public class Engine implements Startable, Suspendable {
 	private final Set< EngineThreadListener > engineThreadListeners = new HashSet<>();
 	private final Set< EngineLogicListener > engineLogicListeners = new HashSet<>();
 
+	public Engine() {
+		renderer.setTargetManager( targetManager );
+	}
+
 	@Override
 	public synchronized void start() {
-		if ( !isActive() && !thread.isAlive() ) {
+		if ( !isActive() ) {
+			Thread thread = new Thread( running );
 			active = true;
 			thread.start();
 		}
@@ -102,9 +108,10 @@ public class Engine implements Startable, Suspendable {
 		@Override
 		public void run() {
 
+			renderer.start();
 			init();
 
-			while ( isActive() ) {
+			while ( active ) {
 
 				timing.tick();
 				while ( !preCycleTasks.isEmpty() ) preCycleTasks.poll().run();
@@ -125,6 +132,7 @@ public class Engine implements Startable, Suspendable {
 			}
 
 			dispose();
+			renderer.stop();
 
 		}
 
@@ -157,14 +165,10 @@ public class Engine implements Startable, Suspendable {
 
 		private void render() {
 			engineLogicListeners.parallelStream().forEach( EngineLogicListener::preRender );
-			targetManager.render();
+			renderer.requestRender();
 			engineLogicListeners.parallelStream().forEach( EngineLogicListener::postRender );
 		}
 
-	}
-
-	public synchronized boolean isAlive() {
-		return thread.isAlive();
 	}
 
 	@Override

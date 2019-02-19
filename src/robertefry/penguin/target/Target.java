@@ -34,7 +34,7 @@ public class Target implements Targetable {
 
 	@Override
 	public void render() {
-		targets.parallelStream().forEach( Targetable::render );
+		targets.forEach( Targetable::render );
 	}
 
 	@Override
