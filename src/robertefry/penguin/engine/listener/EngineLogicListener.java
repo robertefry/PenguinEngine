@@ -18,9 +18,9 @@ public interface EngineLogicListener extends EngineListener {
 	public void preRender();
 
 	public void postRender();
-
+	
 	public void preReset();
-
+	
 	public void postReset();
 
 }

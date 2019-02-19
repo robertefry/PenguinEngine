@@ -17,7 +17,7 @@ import robertefry.penguin.target.TargetManager;
  * @date 22 Jan 2019
  */
 
-public class Engine implements Startable, Suspendable {
+public class Engine implements Startable, Suspendable, Resetable {
 
 	private final Engine.Timing timing = new Timing();
 	private final Engine.Running running = new Running();
@@ -51,7 +51,7 @@ public class Engine implements Startable, Suspendable {
 	@Override
 	public synchronized void suspend() {
 		preCycleTasks.offer( () -> {
-			engineStateListeners.forEach( EngineStateListener::onSuspend );
+			engineStateListeners.parallelStream().forEach( EngineStateListener::onSuspend );
 			suspended = true;
 		} );
 	}
@@ -59,8 +59,17 @@ public class Engine implements Startable, Suspendable {
 	@Override
 	public synchronized void resume() {
 		preCycleTasks.offer( () -> {
-			engineStateListeners.forEach( EngineStateListener::onResume );
+			engineStateListeners.parallelStream().forEach( EngineStateListener::onResume );
 			suspended = false;
+		} );
+	}
+
+	@Override
+	public void reset() {
+		preCycleTasks.offer( () -> {
+			engineLogicListeners.parallelStream().forEach( EngineLogicListener::preReset );
+			targetManager.reset();
+			engineLogicListeners.parallelStream().forEach( EngineLogicListener::postReset );
 		} );
 	}
 

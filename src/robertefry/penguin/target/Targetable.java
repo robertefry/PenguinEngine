@@ -1,10 +1,10 @@
 
 package robertefry.penguin.target;
 
+import robertefry.penguin.engine.Resetable;
 import robertefry.penguin.target.api.Initializable;
 import robertefry.penguin.target.api.Inputable;
 import robertefry.penguin.target.api.Renderable;
-import robertefry.penguin.target.api.Resetable;
 import robertefry.penguin.target.api.Updatable;
 
 /**
