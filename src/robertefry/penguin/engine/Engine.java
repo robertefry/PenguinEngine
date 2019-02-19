@@ -19,9 +19,6 @@ import robertefry.penguin.target.TargetManager;
 // TODO Renderer class & instance synchronisation
 // rendering done by a different thread on request
 
-// TODO allowMultithread
-// use stream API for increased multithreaded logic
-
 public class Engine implements Startable, Suspendable {
 
 	private final Engine.Timing timing = new Timing();
@@ -132,34 +129,36 @@ public class Engine implements Startable, Suspendable {
 		}
 
 		private void init() {
-			engineThreadListeners.forEach( EngineThreadListener::preInitialisationTask );
+			engineThreadListeners.parallelStream().forEach( EngineThreadListener::preInitialisationTask );
 			targetManager.init();
-			engineThreadListeners.forEach( EngineThreadListener::postInitialisationTask );
+			engineThreadListeners.parallelStream().forEach( EngineThreadListener::postInitialisationTask );
 		}
 
 		private void dispose() {
-			engineThreadListeners.forEach( EngineThreadListener::preDisposalTask );
+			engineThreadListeners.parallelStream().forEach( EngineThreadListener::preDisposalTask );
 			targetManager.dispose();
-			engineThreadListeners.forEach( EngineThreadListener::postDisposalTask );
+			engineThreadListeners.parallelStream().forEach( EngineThreadListener::postDisposalTask );
 		}
 
 		private void pollInput() {
-			engineLogicListeners.forEach( EngineLogicListener::prePollInput );
+			engineLogicListeners.parallelStream().forEach( EngineLogicListener::prePollInput );
 			targetManager.pollInput();
-			engineLogicListeners.forEach( EngineLogicListener::postPollInput );
+			engineLogicListeners.parallelStream().forEach( EngineLogicListener::postPollInput );
 		}
 
 		private void tick() {
-			engineLogicListeners.forEach( EngineLogicListener::preTick );
+			engineLogicListeners.parallelStream().forEach( EngineLogicListener::preTick );
 			targetManager.update();
-			engineInputRecievers.forEach( EngineInputReciever::update );
-			engineLogicListeners.forEach( EngineLogicListener::postTick );
+			engineInputRecievers.parallelStream().forEach( EngineInputReciever::update );
+			engineLogicListeners.parallelStream().forEach( EngineLogicListener::postTick );
 		}
 
+		// TODO rendering by new constant thread
+
 		private void render() {
-			engineLogicListeners.forEach( EngineLogicListener::preRender );
+			engineLogicListeners.parallelStream().forEach( EngineLogicListener::preRender );
 			targetManager.render();
-			engineLogicListeners.forEach( EngineLogicListener::postRender );
+			engineLogicListeners.parallelStream().forEach( EngineLogicListener::postRender );
 		}
 
 	}

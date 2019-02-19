@@ -1,8 +1,6 @@
 
 package robertefry.penguin.target;
 
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -16,56 +14,36 @@ public class Target implements Targetable {
 
 	@Override
 	public void init() {
-		targets.forEach( target -> target.init() );
+		targets.parallelStream().forEach( Targetable::init );
 	}
 
 	@Override
 	public void dispose() {
-		targets.forEach( target -> target.dispose() );
+		targets.parallelStream().forEach( Targetable::dispose );
 	}
 
 	@Override
 	public void pollInput() {
-		targets.forEach( target -> target.pollInput() );
+		targets.parallelStream().forEach( Targetable::pollInput );
 	}
 
 	@Override
 	public void update() {
-		targets.forEach( target -> target.update() );
+		targets.parallelStream().forEach( Targetable::update );
 	}
 
 	@Override
 	public void render() {
-		targets.forEach( target -> target.render() );
+		targets.parallelStream().forEach( Targetable::render );
 	}
 
 	@Override
 	public void reset() {
-		targets.forEach( target -> target.reset() );
+		targets.parallelStream().forEach( Targetable::reset );
 	}
 
-	public void addSubTarget( Targetable target ) {
-		this.targets.add( target );
-	}
-
-	public < T extends Targetable > void addSubTargets( T[] targets ) {
-		this.targets.addAll( Arrays.asList( targets ) );
-	}
-
-	public < T extends Targetable > void addSubTargets( Collection< T > targets ) {
-		this.targets.addAll( targets );
-	}
-
-	public void removeSubTarget( Targetable target ) {
-		this.targets.remove( target );
-	}
-
-	public < T extends Targetable > void removeSubTargets( T[] targets ) {
-		this.targets.removeAll( Arrays.asList( targets ) );
-	}
-
-	public < T extends Targetable > void removeSubTargets( Collection< T > targets ) {
-		this.targets.removeAll( targets );
+	public Set< Targetable > getTargets() {
+		return targets;
 	}
 
 }
