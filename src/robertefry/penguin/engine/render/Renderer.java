@@ -1,8 +1,9 @@
 
 package robertefry.penguin.engine.render;
 
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import robertefry.penguin.engine.Startable;
-import robertefry.penguin.target.TargetManager;
 
 /**
  * @author Robert E Fry
@@ -13,8 +14,7 @@ public class Renderer implements Runnable, Startable {
 	private final Thread thread = new Thread( this );
 	private volatile boolean active = false;
 
-	private TargetManager targetManager;
-	private volatile boolean render = false;
+	private final Queue< Runnable > tasks = new ConcurrentLinkedQueue<>();
 
 	public Renderer() {
 		thread.setDaemon( true );
@@ -33,31 +33,20 @@ public class Renderer implements Runnable, Startable {
 		active = false;
 	}
 
-	public void requestRender() {
-		render = true;
-	}
-
 	@Override
 	public void run() {
 		while ( active ) {
-			if ( render ) {
-				targetManager.render();
-				render = false;
-			}
+			if ( !tasks.isEmpty() ) tasks.poll().run();
 		}
+	}
+
+	public void enqueue( Runnable task ) {
+		this.tasks.offer( task );
 	}
 
 	@Override
 	public boolean isActive() {
 		return active;
-	}
-
-	public void setTargetManager( TargetManager targetManager ) {
-		this.targetManager = targetManager;
-	}
-
-	public TargetManager getTargetManager() {
-		return targetManager;
 	}
 
 }

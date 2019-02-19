@@ -37,10 +37,6 @@ public class Engine implements Startable, Suspendable {
 	private final Set< EngineThreadListener > engineThreadListeners = new HashSet<>();
 	private final Set< EngineLogicListener > engineLogicListeners = new HashSet<>();
 
-	public Engine() {
-		renderer.setTargetManager( targetManager );
-	}
-
 	@Override
 	public synchronized void start() {
 		if ( !isActive() ) {
@@ -164,9 +160,11 @@ public class Engine implements Startable, Suspendable {
 		// TODO rendering by new constant thread
 
 		private void render() {
-			engineLogicListeners.parallelStream().forEach( EngineLogicListener::preRender );
-			renderer.requestRender();
-			engineLogicListeners.parallelStream().forEach( EngineLogicListener::postRender );
+			renderer.enqueue( () -> {
+				engineLogicListeners.stream().forEach( EngineLogicListener::preRender );
+				targetManager.render();
+				engineLogicListeners.stream().forEach( EngineLogicListener::postRender );
+			} );
 		}
 
 	}
