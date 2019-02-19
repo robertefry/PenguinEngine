@@ -1,14 +1,14 @@
 
 package robertefry.penguin.engine;
 
-import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Queue;
 import java.util.Set;
-import java.util.Stack;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import robertefry.penguin.engine.listener.EngineLogicListener;
 import robertefry.penguin.engine.listener.EngineStateListener;
 import robertefry.penguin.engine.listener.EngineThreadListener;
-import robertefry.penguin.input.InputReciever;
+import robertefry.penguin.input.EngineInputReciever;
 import robertefry.penguin.target.Resetable;
 import robertefry.penguin.target.TargetManager;
 
@@ -16,6 +16,14 @@ import robertefry.penguin.target.TargetManager;
  * @author Robert E Fry
  * @date 22 Jan 2019
  */
+
+// TODO Renderer class & instance synchronisation
+// rendering done by a different thread on request
+
+// TODO use stream API for increased multithreaded logic
+// allowMultithreadedLogic
+// allowMultithreadedRender
+
 public class Engine implements Resetable, Startable, Suspendable {
 
 	private final Engine.Timing timing = new Timing();
@@ -25,13 +33,13 @@ public class Engine implements Resetable, Startable, Suspendable {
 	private volatile boolean active = false, suspended = false;
 	private volatile float refreshrate = -1;
 
-	private final TargetManager manager = new TargetManager();
+	private final TargetManager targetManager = new TargetManager();
 
-	private final Stack< Runnable > preCycleTasks = new Stack<>();
-	private final Set< EngineStateListener > stateListeners = new HashSet<>();
-	private final Set< EngineThreadListener > threadListeners = new HashSet<>();
-	private final Set< EngineLogicListener > logicListeners = new HashSet<>();
-	private final Set< InputReciever > inputRecievers = new HashSet<>();
+	private final Queue< Runnable > preCycleTasks = new ConcurrentLinkedQueue<>();
+	private final Set< EngineInputReciever > engineInputRecievers = new HashSet<>();
+	private final Set< EngineStateListener > engineStateListeners = new HashSet<>();
+	private final Set< EngineThreadListener > engineThreadListeners = new HashSet<>();
+	private final Set< EngineLogicListener > engineLogicListeners = new HashSet<>();
 
 	@Override
 	public synchronized void start() {
@@ -48,37 +56,37 @@ public class Engine implements Resetable, Startable, Suspendable {
 
 	@Override
 	public synchronized void suspend() {
-		preCycleTasks.push( () -> {
-			stateListeners.forEach( EngineStateListener::onSuspend );
+		preCycleTasks.offer( () -> {
+			engineStateListeners.forEach( EngineStateListener::onSuspend );
 			suspended = true;
 		} );
 	}
 
 	@Override
 	public synchronized void resume() {
-		preCycleTasks.push( () -> {
-			stateListeners.forEach( EngineStateListener::onResume );
+		preCycleTasks.offer( () -> {
+			engineStateListeners.forEach( EngineStateListener::onResume );
 			suspended = false;
 		} );
 	}
 
 	@Override
 	public void reset() {
-		preCycleTasks.push( () -> {
-			logicListeners.forEach( EngineLogicListener::preReset );
-			manager.reset();
-			logicListeners.forEach( EngineLogicListener::postReset );
+		preCycleTasks.offer( () -> {
+			engineLogicListeners.forEach( EngineLogicListener::preReset );
+			targetManager.reset();
+			engineLogicListeners.forEach( EngineLogicListener::postReset );
 		} );
 	}
 
 	public synchronized void forceTick() {
-		preCycleTasks.push( () -> {
+		preCycleTasks.offer( () -> {
 			running.omega++;
 		} );
 	}
 
 	public synchronized void forceRender() {
-		preCycleTasks.push( () -> {
+		preCycleTasks.offer( () -> {
 			running.renderable = true;
 		} );
 	}
@@ -113,7 +121,7 @@ public class Engine implements Resetable, Startable, Suspendable {
 			while ( isActive() ) {
 
 				timing.tick();
-				while ( !preCycleTasks.isEmpty() ) preCycleTasks.pop().run();
+				while ( !preCycleTasks.isEmpty() ) preCycleTasks.poll().run();
 				if ( !isSuspended() ) omega += ( refreshrate < 0 ) ? 1 : timing.getDelta() * refreshrate / 1e9;
 
 				while ( omega >= 1 ) {
@@ -135,84 +143,36 @@ public class Engine implements Resetable, Startable, Suspendable {
 		}
 
 		private void init() {
-			threadListeners.forEach( EngineThreadListener::preInitialisationTask );
-			manager.init();
-			threadListeners.forEach( EngineThreadListener::postInitialisationTask );
+			engineThreadListeners.forEach( EngineThreadListener::preInitialisationTask );
+			targetManager.init();
+			engineThreadListeners.forEach( EngineThreadListener::postInitialisationTask );
 		}
 
 		private void dispose() {
-			threadListeners.forEach( EngineThreadListener::preDisposalTask );
-			manager.dispose();
-			threadListeners.forEach( EngineThreadListener::postDisposalTask );
+			engineThreadListeners.forEach( EngineThreadListener::preDisposalTask );
+			targetManager.dispose();
+			engineThreadListeners.forEach( EngineThreadListener::postDisposalTask );
 		}
 
 		private void pollInput() {
-			logicListeners.forEach( EngineLogicListener::prePollInput );
-			manager.pollInput();
-			logicListeners.forEach( EngineLogicListener::postPollInput );
+			engineLogicListeners.forEach( EngineLogicListener::prePollInput );
+			targetManager.pollInput();
+			engineLogicListeners.forEach( EngineLogicListener::postPollInput );
 		}
 
 		private void tick() {
-			logicListeners.forEach( EngineLogicListener::preTick );
-			manager.update();
-			inputRecievers.forEach( InputReciever::tick );
-			logicListeners.forEach( EngineLogicListener::postTick );
+			engineLogicListeners.forEach( EngineLogicListener::preTick );
+			targetManager.update();
+			engineInputRecievers.forEach( EngineInputReciever::update );
+			engineLogicListeners.forEach( EngineLogicListener::postTick );
 		}
 
 		private void render() {
-			logicListeners.forEach( EngineLogicListener::preRender );
-			manager.render();
-			logicListeners.forEach( EngineLogicListener::postRender );
+			engineLogicListeners.forEach( EngineLogicListener::preRender );
+			targetManager.render();
+			engineLogicListeners.forEach( EngineLogicListener::postRender );
 		}
 
-	}
-
-	public Timing getTiming() {
-		return timing;
-	}
-
-	public TargetManager getTargetManager() {
-		return manager;
-	}
-
-	public void addPreCycleTask( Runnable... tasks ) {
-		preCycleTasks.addAll( Arrays.asList( tasks ) );
-	}
-
-	public void removePreCycleTask( Runnable... tasks ) {
-		preCycleTasks.removeAll( Arrays.asList( tasks ) );
-	}
-
-	public void addStateListener( EngineStateListener... listeners ) {
-		stateListeners.addAll( Arrays.asList( listeners ) );
-	}
-
-	public void removeStateListener( EngineStateListener... listeners ) {
-		stateListeners.removeAll( Arrays.asList( listeners ) );
-	}
-
-	public void addThreadListener( EngineThreadListener... listeners ) {
-		threadListeners.addAll( Arrays.asList( listeners ) );
-	}
-
-	public void removeThreadListener( EngineThreadListener... listeners ) {
-		threadListeners.addAll( Arrays.asList( listeners ) );
-	}
-
-	public void addLogicListener( EngineLogicListener... listeners ) {
-		logicListeners.addAll( Arrays.asList( listeners ) );
-	}
-
-	public void removeLogicListener( EngineLogicListener... listeners ) {
-		logicListeners.removeAll( Arrays.asList( listeners ) );
-	}
-
-	public void syncInputReciever( InputReciever reciever ) {
-		inputRecievers.add( reciever );
-	}
-
-	public void unsyncInputReciever( InputReciever reciever ) {
-		inputRecievers.remove( reciever );
 	}
 
 	public boolean isAlive() {
@@ -229,12 +189,36 @@ public class Engine implements Resetable, Startable, Suspendable {
 		return suspended;
 	}
 
+	public Timing getTiming() {
+		return timing;
+	}
+
 	public float getRefreshRate() {
 		return refreshrate;
 	}
 
 	public void setRefreshRate( float refreshrate ) {
 		this.refreshrate = refreshrate;
+	}
+
+	public TargetManager getTargetManager() {
+		return targetManager;
+	}
+
+	public Set< EngineInputReciever > getEngineInputRecievers() {
+		return engineInputRecievers;
+	}
+
+	public Set< EngineStateListener > getEngineStateListeners() {
+		return engineStateListeners;
+	}
+
+	public Set< EngineThreadListener > getEngineThreadListeners() {
+		return engineThreadListeners;
+	}
+
+	public Set< EngineLogicListener > getEngineLogicListeners() {
+		return engineLogicListeners;
 	}
 
 }

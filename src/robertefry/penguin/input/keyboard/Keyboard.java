@@ -10,14 +10,14 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import robertefry.penguin.input.InputReciever;
+import robertefry.penguin.input.EngineInputReciever;
 import robertefry.penguin.input.keyboard.listener.KeyboardListener;
 
 /**
  * @author Robert E Fry
  * @date 14 Feb 2019
  */
-public class Keyboard implements InputReciever, KeyboardListener {
+public class Keyboard implements EngineInputReciever, KeyboardListener {
 
 	private final Map< Integer, Key > keys = new HashMap<>();
 	private final InstanceListener listener = new InstanceListener();
@@ -30,8 +30,8 @@ public class Keyboard implements InputReciever, KeyboardListener {
 	}
 
 	@Override
-	public void tick() {
-		keys.values().forEach( Key::tick );
+	public void update() {
+		keys.values().forEach( Key::update );
 	}
 
 	@Override

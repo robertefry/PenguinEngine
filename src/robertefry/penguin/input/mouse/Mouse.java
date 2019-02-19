@@ -12,7 +12,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import javax.swing.event.MouseInputListener;
-import robertefry.penguin.input.InputReciever;
+import robertefry.penguin.input.EngineInputReciever;
 import robertefry.penguin.input.mouse.listener.MouseActionListener;
 import robertefry.penguin.input.mouse.listener.MouseButtonListener;
 
@@ -20,7 +20,7 @@ import robertefry.penguin.input.mouse.listener.MouseButtonListener;
  * @author Robert E Fry
  * @date 14 Feb 2019
  */
-public class Mouse implements InputReciever, MouseButtonListener, MouseActionListener {
+public class Mouse implements EngineInputReciever, MouseButtonListener, MouseActionListener {
 
 	private final Map< Integer, Button > buttons = new HashMap<>();
 	private final InstanceListener listener = new InstanceListener();
@@ -36,8 +36,8 @@ public class Mouse implements InputReciever, MouseButtonListener, MouseActionLis
 	}
 
 	@Override
-	public void tick() {
-		buttons.values().forEach( Button::tick );
+	public void update() {
+		buttons.values().forEach( Button::update );
 	}
 
 	@Override

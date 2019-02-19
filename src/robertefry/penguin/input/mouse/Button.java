@@ -6,14 +6,14 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import robertefry.penguin.input.InputReciever;
+import robertefry.penguin.input.EngineInputReciever;
 import robertefry.penguin.input.mouse.listener.MouseButtonListener;
 
 /**
  * @author Robert E Fry
  * @date 14 Feb 2019
  */
-public class Button implements InputReciever, MouseButtonListener {
+public class Button implements EngineInputReciever, MouseButtonListener {
 
 	private final int code;
 	private final InstanceListener listener = new InstanceListener();
@@ -32,7 +32,7 @@ public class Button implements InputReciever, MouseButtonListener {
 	}
 
 	@Override
-	public void tick() {
+	public void update() {
 	}
 
 	@Override

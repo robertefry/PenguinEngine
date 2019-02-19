@@ -4,14 +4,14 @@ package robertefry.penguin.input.keyboard;
 import java.awt.Component;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import robertefry.penguin.input.InputReciever;
+import robertefry.penguin.input.EngineInputReciever;
 import robertefry.penguin.input.keyboard.listener.KeyboardListener;
 
 /**
  * @author Robert E Fry
  * @date 14 Feb 2019
  */
-public class Key implements InputReciever, KeyboardListener {
+public class Key implements EngineInputReciever, KeyboardListener {
 
 	public final int code;
 	private boolean down = false;
@@ -29,7 +29,7 @@ public class Key implements InputReciever, KeyboardListener {
 	}
 
 	@Override
-	public void tick() {
+	public void update() {
 		setState( down, false, false );
 	}
 
