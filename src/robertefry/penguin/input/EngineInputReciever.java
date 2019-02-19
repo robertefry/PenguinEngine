@@ -2,7 +2,7 @@
 package robertefry.penguin.input;
 
 import java.awt.Component;
-import robertefry.penguin.target.Updatable;
+import robertefry.penguin.target.api.Updatable;
 
 /**
  * @author Robert E Fry

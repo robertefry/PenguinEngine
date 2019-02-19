@@ -1,5 +1,5 @@
 
-package robertefry.penguin.target;
+package robertefry.penguin.target.api;
 
 /**
  * @author Robert E Fry

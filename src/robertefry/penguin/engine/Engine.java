@@ -9,7 +9,6 @@ import robertefry.penguin.engine.listener.EngineLogicListener;
 import robertefry.penguin.engine.listener.EngineStateListener;
 import robertefry.penguin.engine.listener.EngineThreadListener;
 import robertefry.penguin.input.EngineInputReciever;
-import robertefry.penguin.target.Resetable;
 import robertefry.penguin.target.TargetManager;
 
 /**
@@ -20,11 +19,10 @@ import robertefry.penguin.target.TargetManager;
 // TODO Renderer class & instance synchronisation
 // rendering done by a different thread on request
 
-// TODO use stream API for increased multithreaded logic
-// allowMultithreadedLogic
-// allowMultithreadedRender
+// TODO allowMultithread
+// use stream API for increased multithreaded logic
 
-public class Engine implements Resetable, Startable, Suspendable {
+public class Engine implements Startable, Suspendable {
 
 	private final Engine.Timing timing = new Timing();
 	private final Engine.Running running = new Running();
@@ -67,15 +65,6 @@ public class Engine implements Resetable, Startable, Suspendable {
 		preCycleTasks.offer( () -> {
 			engineStateListeners.forEach( EngineStateListener::onResume );
 			suspended = false;
-		} );
-	}
-
-	@Override
-	public void reset() {
-		preCycleTasks.offer( () -> {
-			engineLogicListeners.forEach( EngineLogicListener::preReset );
-			targetManager.reset();
-			engineLogicListeners.forEach( EngineLogicListener::postReset );
 		} );
 	}
 
