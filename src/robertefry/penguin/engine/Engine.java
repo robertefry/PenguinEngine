@@ -17,9 +17,6 @@ import robertefry.penguin.target.TargetManager;
  * @date 22 Jan 2019
  */
 
-// TODO Renderer class & instance synchronisation
-// rendering done by a different thread on request
-
 public class Engine implements Startable, Suspendable {
 
 	private final Engine.Timing timing = new Timing();
@@ -156,8 +153,6 @@ public class Engine implements Startable, Suspendable {
 			engineInputRecievers.parallelStream().forEach( EngineInputReciever::update );
 			engineLogicListeners.parallelStream().forEach( EngineLogicListener::postTick );
 		}
-
-		// TODO rendering by new constant thread
 
 		private void render() {
 			renderer.enqueue( () -> {
