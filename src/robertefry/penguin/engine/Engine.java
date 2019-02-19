@@ -164,49 +164,49 @@ public class Engine implements Startable, Suspendable {
 
 	}
 
-	public boolean isAlive() {
+	public synchronized boolean isAlive() {
 		return thread.isAlive();
 	}
 
 	@Override
-	public boolean isActive() {
+	public synchronized boolean isActive() {
 		return active;
 	}
 
 	@Override
-	public boolean isSuspended() {
+	public synchronized boolean isSuspended() {
 		return suspended;
 	}
 
-	public Timing getTiming() {
+	public synchronized Timing getTiming() {
 		return timing;
 	}
 
-	public float getRefreshRate() {
+	public synchronized float getRefreshRate() {
 		return refreshrate;
 	}
 
-	public void setRefreshRate( float refreshrate ) {
+	public synchronized void setRefreshRate( float refreshrate ) {
 		this.refreshrate = refreshrate;
 	}
 
-	public TargetManager getTargetManager() {
+	public synchronized TargetManager getTargetManager() {
 		return targetManager;
 	}
 
-	public Set< EngineInputReciever > getEngineInputRecievers() {
+	public synchronized Set< EngineInputReciever > getEngineInputRecievers() {
 		return engineInputRecievers;
 	}
 
-	public Set< EngineStateListener > getEngineStateListeners() {
+	public synchronized Set< EngineStateListener > getEngineStateListeners() {
 		return engineStateListeners;
 	}
 
-	public Set< EngineThreadListener > getEngineThreadListeners() {
+	public synchronized Set< EngineThreadListener > getEngineThreadListeners() {
 		return engineThreadListeners;
 	}
 
-	public Set< EngineLogicListener > getEngineLogicListeners() {
+	public synchronized Set< EngineLogicListener > getEngineLogicListeners() {
 		return engineLogicListeners;
 	}
 
