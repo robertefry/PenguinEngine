@@ -5,8 +5,6 @@ import java.awt.Component;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -15,6 +13,7 @@ import javax.swing.event.MouseInputListener;
 import robertefry.penguin.input.EngineInputReciever;
 import robertefry.penguin.input.mouse.listener.MouseActionListener;
 import robertefry.penguin.input.mouse.listener.MouseButtonListener;
+import robertefry.penguin.input.mouse.listener.MouseObjectListener;
 
 /**
  * @author Robert E Fry
@@ -92,52 +91,30 @@ public class Mouse implements EngineInputReciever, MouseButtonListener, MouseAct
 		return button;
 	}
 
-	public void addMouseButtonListener( MouseButtonListener buttonListener ) {
-		mouseButtonListeners.add( buttonListener );
+	public void addMouseButtonListener( MouseButtonListener mouseButtonListener ) {
+		mouseButtonListeners.add( mouseButtonListener );
 	}
 
-	public < T extends MouseButtonListener > void addMouseButtonListener( T[] buttonListeners ) {
-		mouseButtonListeners.addAll( Arrays.asList( buttonListeners ) );
+	public void removeMouseButtonListener( MouseButtonListener mouseButtonListener ) {
+		mouseButtonListeners.remove( mouseButtonListener );
 	}
 
-	public < T extends MouseButtonListener > void addMouseButtonListener( Collection< T > buttonListeners ) {
-		mouseButtonListeners.addAll( buttonListeners );
+	public void addMouseActionListener( MouseActionListener mouseActionListener ) {
+		mouseActionListeners.add( mouseActionListener );
 	}
 
-	public void addMouseActionListener( MouseActionListener actionListener ) {
-		mouseActionListeners.add( actionListener );
+	public void removeMouseActionListener( MouseActionListener mouseActionListener ) {
+		mouseActionListeners.remove( mouseActionListener );
 	}
 
-	public < T extends MouseActionListener > void addMouseActionListener( T[] actionListeners ) {
-		mouseActionListeners.addAll( Arrays.asList( actionListeners ) );
+	public void addMouseObjectListener( MouseObjectListener mouseObjectListener ) {
+		addMouseButtonListener( mouseObjectListener );
+		addMouseActionListener( mouseObjectListener );
 	}
 
-	public < T extends MouseActionListener > void addMouseActionListener( Collection< T > actionListeners ) {
-		mouseActionListeners.addAll( actionListeners );
-	}
-
-	public void removeMouseButtonListener( MouseButtonListener buttonListener ) {
-		mouseButtonListeners.remove( buttonListener );
-	}
-
-	public < T extends MouseButtonListener > void removeMouseButtonListener( T[] buttonListeners ) {
-		mouseButtonListeners.removeAll( Arrays.asList( buttonListeners ) );
-	}
-
-	public < T extends MouseButtonListener > void removeMouseButtonListener( Collection< T > buttonListeners ) {
-		mouseButtonListeners.removeAll( buttonListeners );
-	}
-
-	public void removeMouseActionListener( MouseActionListener actionListener ) {
-		mouseActionListeners.remove( actionListener );
-	}
-
-	public < T extends MouseActionListener > void removeMouseActionListener( T[] actionListeners ) {
-		mouseActionListeners.removeAll( Arrays.asList( actionListeners ) );
-	}
-
-	public < T extends MouseActionListener > void removeMouseActionListener( Collection< T > actionListeners ) {
-		mouseActionListeners.removeAll( actionListeners );
+	public void removeObjectActionListener( MouseObjectListener mouseObjectListener ) {
+		removeMouseButtonListener( mouseObjectListener );
+		removeMouseActionListener( mouseObjectListener );
 	}
 
 	private final class InstanceListener implements MouseInputListener, MouseWheelListener {

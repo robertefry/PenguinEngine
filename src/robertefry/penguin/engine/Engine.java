@@ -51,7 +51,7 @@ public class Engine implements Startable, Suspendable, Resetable {
 	@Override
 	public synchronized void suspend() {
 		preCycleTasks.offer( () -> {
-			engineStateListeners.parallelStream().forEach( EngineStateListener::onSuspend );
+			engineStateListeners.stream().parallel().forEach( EngineStateListener::onSuspend );
 			suspended = true;
 		} );
 	}
@@ -59,7 +59,7 @@ public class Engine implements Startable, Suspendable, Resetable {
 	@Override
 	public synchronized void resume() {
 		preCycleTasks.offer( () -> {
-			engineStateListeners.parallelStream().forEach( EngineStateListener::onResume );
+			engineStateListeners.stream().parallel().forEach( EngineStateListener::onResume );
 			suspended = false;
 		} );
 	}
@@ -67,9 +67,9 @@ public class Engine implements Startable, Suspendable, Resetable {
 	@Override
 	public void reset() {
 		preCycleTasks.offer( () -> {
-			engineLogicListeners.parallelStream().forEach( EngineLogicListener::preReset );
+			engineLogicListeners.stream().parallel().forEach( EngineLogicListener::preReset );
 			targetManager.reset();
-			engineLogicListeners.parallelStream().forEach( EngineLogicListener::postReset );
+			engineLogicListeners.stream().parallel().forEach( EngineLogicListener::postReset );
 		} );
 	}
 
@@ -139,28 +139,28 @@ public class Engine implements Startable, Suspendable, Resetable {
 		}
 
 		private void init() {
-			engineThreadListeners.parallelStream().forEach( EngineThreadListener::preInitialisationTask );
+			engineThreadListeners.stream().parallel().forEach( EngineThreadListener::preInitialisationTask );
 			targetManager.init();
-			engineThreadListeners.parallelStream().forEach( EngineThreadListener::postInitialisationTask );
+			engineThreadListeners.stream().parallel().forEach( EngineThreadListener::postInitialisationTask );
 		}
 
 		private void dispose() {
-			engineThreadListeners.parallelStream().forEach( EngineThreadListener::preDisposalTask );
+			engineThreadListeners.stream().parallel().forEach( EngineThreadListener::preDisposalTask );
 			targetManager.dispose();
-			engineThreadListeners.parallelStream().forEach( EngineThreadListener::postDisposalTask );
+			engineThreadListeners.stream().parallel().forEach( EngineThreadListener::postDisposalTask );
 		}
 
 		private void pollInput() {
-			engineLogicListeners.parallelStream().forEach( EngineLogicListener::prePollInput );
+			engineLogicListeners.stream().parallel().forEach( EngineLogicListener::prePollInput );
 			targetManager.pollInput();
-			engineLogicListeners.parallelStream().forEach( EngineLogicListener::postPollInput );
+			engineLogicListeners.stream().parallel().forEach( EngineLogicListener::postPollInput );
 		}
 
 		private void tick() {
-			engineLogicListeners.parallelStream().forEach( EngineLogicListener::preTick );
+			engineLogicListeners.stream().parallel().forEach( EngineLogicListener::preTick );
 			targetManager.update();
-			engineInputRecievers.parallelStream().forEach( EngineInputReciever::update );
-			engineLogicListeners.parallelStream().forEach( EngineLogicListener::postTick );
+			engineInputRecievers.stream().parallel().forEach( EngineInputReciever::update );
+			engineLogicListeners.stream().parallel().forEach( EngineLogicListener::postTick );
 		}
 
 		private void render() {

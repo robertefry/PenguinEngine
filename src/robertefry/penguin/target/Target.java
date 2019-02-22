@@ -14,22 +14,22 @@ public class Target implements Targetable {
 
 	@Override
 	public void init() {
-		targets.parallelStream().forEach( Targetable::init );
+		targets.stream().parallel().forEach( Targetable::init );
 	}
 
 	@Override
 	public void dispose() {
-		targets.parallelStream().forEach( Targetable::dispose );
+		targets.stream().parallel().forEach( Targetable::dispose );
 	}
 
 	@Override
 	public void pollInput() {
-		targets.parallelStream().forEach( Targetable::pollInput );
+		targets.stream().parallel().forEach( Targetable::pollInput );
 	}
 
 	@Override
 	public void update() {
-		targets.parallelStream().forEach( Targetable::update );
+		targets.stream().parallel().forEach( Targetable::update );
 	}
 
 	@Override
@@ -39,7 +39,7 @@ public class Target implements Targetable {
 
 	@Override
 	public void reset() {
-		targets.parallelStream().forEach( Targetable::reset );
+		targets.stream().parallel().forEach( Targetable::reset );
 	}
 
 	public Set< Targetable > getTargets() {
