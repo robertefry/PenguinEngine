@@ -7,12 +7,16 @@ package robertefry.penguin.target;
  */
 public class TargetBlank implements Targetable {
 
+	private boolean initialized = false;
+
 	@Override
 	public void init() {
+		initialized = true;
 	}
 
 	@Override
 	public void dispose() {
+		initialized = false;
 	}
 
 	@Override
@@ -29,6 +33,11 @@ public class TargetBlank implements Targetable {
 
 	@Override
 	public void reset() {
+	}
+
+	@Override
+	public boolean isInitialized() {
+		return initialized;
 	}
 
 }

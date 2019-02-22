@@ -11,4 +11,6 @@ public interface Initializable {
 
 	public void dispose();
 
+	public boolean isInitialized();
+
 }

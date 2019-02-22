@@ -11,14 +11,17 @@ import java.util.Set;
 public class Target implements Targetable {
 
 	protected final Set< Targetable > targets = new HashSet<>();
+	private boolean initialized = false;
 
 	@Override
 	public void init() {
 		targets.stream().parallel().forEach( Targetable::init );
+		initialized = true;
 	}
 
 	@Override
 	public void dispose() {
+		initialized = false;
 		targets.stream().parallel().forEach( Targetable::dispose );
 	}
 
@@ -44,6 +47,11 @@ public class Target implements Targetable {
 
 	public Set< Targetable > getTargets() {
 		return targets;
+	}
+
+	@Override
+	public boolean isInitialized() {
+		return initialized;
 	}
 
 }
