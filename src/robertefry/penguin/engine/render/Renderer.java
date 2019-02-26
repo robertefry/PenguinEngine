@@ -1,10 +1,12 @@
 
 package robertefry.penguin.engine.render;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
 import javax.swing.JPanel;
 import robertefry.penguin.engine.Engine;
+import robertefry.penguin.engine.listener.EngineLogicAdapter;
 import robertefry.penguin.target.Targetable;
 
 /**
@@ -17,7 +19,16 @@ public class Renderer {
 	private final JPanel canvas = new InstanceCanvas();
 
 	public Renderer( Engine engine ) {
+
 		this.engine = engine;
+		canvas.setBackground( Color.BLACK );
+		
+		engine.getEngineLogicListeners().add( new EngineLogicAdapter() {
+			public void postRender() {
+				canvas.repaint();
+			}
+		} );
+
 	}
 
 	public void render() {
