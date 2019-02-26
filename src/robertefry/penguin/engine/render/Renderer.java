@@ -4,8 +4,9 @@ package robertefry.penguin.engine.render;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
+import java.util.Collection;
 import javax.swing.JPanel;
-import robertefry.penguin.engine.Engine;
+import robertefry.penguin.target.Targetable;
 
 /**
  * @author Robert E Fry
@@ -13,22 +14,15 @@ import robertefry.penguin.engine.Engine;
  */
 public class Renderer {
 
-	private final Engine engine;
+	private final Collection< Targetable > targets;
 	private final JPanel canvas = new InstanceCanvas();
 
-	public Renderer( Engine engine ) {
-
-		this.engine = engine;
-		canvas.setBackground( Color.BLACK );
-
+	public Renderer( Collection< Targetable > targets ) {
+		this.targets = targets;
 	}
 
 	public void render() {
 		canvas.repaint();
-	}
-
-	public Graphics getGraphics() {
-		return canvas.getGraphics();
 	}
 
 	public Component getComponent() {
@@ -38,10 +32,14 @@ public class Renderer {
 	private final class InstanceCanvas extends JPanel {
 		private static final long serialVersionUID = 2900713581555088356L;
 
+		public InstanceCanvas() {
+			setBackground( Color.BLACK );
+		}
+
 		@Override
 		protected void paintComponent( Graphics g ) {
 			super.paintComponent( g );
-			engine.getTargetManager().forEach( target -> target.render( g ) );
+			targets.forEach( target -> target.render( g ) );
 		}
 
 	}

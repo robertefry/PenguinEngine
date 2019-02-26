@@ -28,8 +28,8 @@ public class Engine implements Startable, Suspendable, Resetable {
 	private final Set< EngineThreadListener > engineThreadListeners = new HashSet<>();
 	private final Set< EngineLogicListener > engineLogicListeners = new HashSet<>();
 
-	private final Renderer renderer = new Renderer( this );
 	private final TargetManager targetManager = new TargetManager();
+	private final Renderer renderer = new Renderer( targetManager );
 
 	private volatile boolean active = false, suspended = false;
 	private volatile float refreshrate = -1;
