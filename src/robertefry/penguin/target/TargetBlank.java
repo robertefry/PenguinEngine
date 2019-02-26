@@ -1,6 +1,8 @@
 
 package robertefry.penguin.target;
 
+import java.awt.Graphics;
+
 /**
  * @author Robert E Fry
  * @date 7 Feb 2019
@@ -28,7 +30,7 @@ public class TargetBlank implements Targetable {
 	}
 
 	@Override
-	public void render() {
+	public void render( Graphics g ) {
 	}
 
 	@Override

@@ -6,8 +6,6 @@ import java.awt.Component;
 import java.awt.Graphics;
 import javax.swing.JPanel;
 import robertefry.penguin.engine.Engine;
-import robertefry.penguin.engine.listener.EngineLogicAdapter;
-import robertefry.penguin.target.Targetable;
 
 /**
  * @author Robert E Fry
@@ -22,12 +20,6 @@ public class Renderer {
 
 		this.engine = engine;
 		canvas.setBackground( Color.BLACK );
-		
-		engine.getEngineLogicListeners().add( new EngineLogicAdapter() {
-			public void postRender() {
-				canvas.repaint();
-			}
-		} );
 
 	}
 
@@ -49,7 +41,7 @@ public class Renderer {
 		@Override
 		protected void paintComponent( Graphics g ) {
 			super.paintComponent( g );
-			engine.getTargetManager().forEach( Targetable::render );
+			engine.getTargetManager().forEach( target -> target.render( g ) );
 		}
 
 	}

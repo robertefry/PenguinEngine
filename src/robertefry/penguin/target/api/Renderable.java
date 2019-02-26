@@ -1,6 +1,8 @@
 
 package robertefry.penguin.target.api;
 
+import java.awt.Graphics;
+
 /**
  * @author Robert E Fry
  * @date 16 Feb 2019
@@ -8,6 +10,6 @@ package robertefry.penguin.target.api;
 @FunctionalInterface
 public interface Renderable {
 
-	public void render();
+	public void render( Graphics g );
 
 }

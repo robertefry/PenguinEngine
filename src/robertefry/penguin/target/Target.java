@@ -1,6 +1,7 @@
 
 package robertefry.penguin.target;
 
+import java.awt.Graphics;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -36,8 +37,8 @@ public class Target implements Targetable {
 	}
 
 	@Override
-	public void render() {
-		targets.stream().forEach( Targetable::render );
+	public void render( Graphics g ) {
+		targets.stream().forEach( target -> target.render( g ) );
 	}
 
 	@Override
