@@ -1,52 +1,46 @@
 
 package robertefry.penguin.engine.render;
 
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import robertefry.penguin.engine.Startable;
+import java.awt.Component;
+import java.awt.Graphics;
+import javax.swing.JPanel;
+import robertefry.penguin.engine.Engine;
+import robertefry.penguin.target.Targetable;
 
 /**
  * @author Robert E Fry
- * @date 19 Feb 2019
+ * @date 26 Feb 2019
  */
-public class Renderer implements Runnable, Startable {
+public class Renderer {
 
-	private final Thread thread = new Thread( this );
-	private volatile boolean active = false;
+	private final Engine engine;
+	private final JPanel canvas = new InstanceCanvas();
 
-	private final Queue< Runnable > tasks = new ConcurrentLinkedQueue<>();
-
-	public Renderer() {
-		thread.setDaemon( true );
+	public Renderer( Engine engine ) {
+		this.engine = engine;
 	}
 
-	@Override
-	public void start() {
-		if ( !isActive() && !thread.isAlive() ) {
-			active = true;
-			thread.start();
+	public void render() {
+		canvas.repaint();
+	}
+
+	public Graphics getGraphics() {
+		return canvas.getGraphics();
+	}
+
+	public Component getComponent() {
+		return canvas;
+	}
+
+	private final class InstanceCanvas extends JPanel {
+		private static final long serialVersionUID = 2900713581555088356L;
+
+		@Override
+		protected void paintComponent( Graphics g ) {
+			super.paintComponent( g );
+			engine.getTargetManager().forEach( Targetable::render );
 		}
-	}
 
-	@Override
-	public void stop() {
-		active = false;
-	}
-
-	@Override
-	public void run() {
-		while ( active ) {
-			if ( !tasks.isEmpty() ) tasks.poll().run();
-		}
-	}
-
-	public void enqueue( Runnable task ) {
-		this.tasks.offer( task );
-	}
-
-	@Override
-	public boolean isActive() {
-		return active;
 	}
 
 }

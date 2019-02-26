@@ -22,17 +22,17 @@ public class Engine implements Startable, Suspendable, Resetable {
 	private final Engine.Timing timing = new Timing();
 	private final Engine.Running running = new Running();
 
-	private volatile boolean active = false, suspended = false;
-	private volatile float refreshrate = -1;
-
-	private final Renderer renderer = new Renderer();
-	private final TargetManager targetManager = new TargetManager();
-
 	private final Queue< Runnable > preCycleTasks = new ConcurrentLinkedQueue<>();
 	private final Set< EngineInputReciever > engineInputRecievers = new HashSet<>();
 	private final Set< EngineStateListener > engineStateListeners = new HashSet<>();
 	private final Set< EngineThreadListener > engineThreadListeners = new HashSet<>();
 	private final Set< EngineLogicListener > engineLogicListeners = new HashSet<>();
+
+	private final Renderer renderer = new Renderer( this );
+	private final TargetManager targetManager = new TargetManager();
+
+	private volatile boolean active = false, suspended = false;
+	private volatile float refreshrate = -1;
 
 	@Override
 	public synchronized void start() {
@@ -49,7 +49,7 @@ public class Engine implements Startable, Suspendable, Resetable {
 	}
 
 	@Override
-	public synchronized void suspend() {
+	public void suspend() {
 		preCycleTasks.offer( () -> {
 			engineStateListeners.stream().parallel().forEach( EngineStateListener::onSuspend );
 			suspended = true;
@@ -57,7 +57,7 @@ public class Engine implements Startable, Suspendable, Resetable {
 	}
 
 	@Override
-	public synchronized void resume() {
+	public void resume() {
 		preCycleTasks.offer( () -> {
 			engineStateListeners.stream().parallel().forEach( EngineStateListener::onResume );
 			suspended = false;
@@ -73,13 +73,13 @@ public class Engine implements Startable, Suspendable, Resetable {
 		} );
 	}
 
-	public synchronized void forceTick() {
+	public void forceTick() {
 		preCycleTasks.offer( () -> {
 			running.omega++;
 		} );
 	}
 
-	public synchronized void forceRender() {
+	public void forceRender() {
 		preCycleTasks.offer( () -> {
 			running.renderable = true;
 		} );
@@ -110,7 +110,6 @@ public class Engine implements Startable, Suspendable, Resetable {
 		@Override
 		public void run() {
 
-			renderer.start();
 			init();
 
 			while ( active ) {
@@ -134,7 +133,6 @@ public class Engine implements Startable, Suspendable, Resetable {
 			}
 
 			dispose();
-			renderer.stop();
 
 		}
 
@@ -164,11 +162,9 @@ public class Engine implements Startable, Suspendable, Resetable {
 		}
 
 		private void render() {
-			renderer.enqueue( () -> {
-				engineLogicListeners.stream().forEach( EngineLogicListener::preRender );
-				targetManager.render();
-				engineLogicListeners.stream().forEach( EngineLogicListener::postRender );
-			} );
+			engineLogicListeners.stream().parallel().forEach( EngineLogicListener::preRender );
+			renderer.render();
+			engineLogicListeners.stream().parallel().forEach( EngineLogicListener::postRender );
 		}
 
 	}
@@ -195,23 +191,27 @@ public class Engine implements Startable, Suspendable, Resetable {
 		this.refreshrate = refreshrate;
 	}
 
-	public synchronized TargetManager getTargetManager() {
+	public TargetManager getTargetManager() {
 		return targetManager;
 	}
 
-	public synchronized Set< EngineInputReciever > getEngineInputRecievers() {
+	public Renderer getRenderer() {
+		return renderer;
+	}
+
+	public Set< EngineInputReciever > getEngineInputRecievers() {
 		return engineInputRecievers;
 	}
 
-	public synchronized Set< EngineStateListener > getEngineStateListeners() {
+	public Set< EngineStateListener > getEngineStateListeners() {
 		return engineStateListeners;
 	}
 
-	public synchronized Set< EngineThreadListener > getEngineThreadListeners() {
+	public Set< EngineThreadListener > getEngineThreadListeners() {
 		return engineThreadListeners;
 	}
 
-	public synchronized Set< EngineLogicListener > getEngineLogicListeners() {
+	public Set< EngineLogicListener > getEngineLogicListeners() {
 		return engineLogicListeners;
 	}
 
