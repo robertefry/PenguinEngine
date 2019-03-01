@@ -32,6 +32,7 @@ public class Engine implements Startable, Suspendable, Resetable {
 	private final Renderer renderer = new Renderer( targetManager );
 
 	private volatile boolean active = false, suspended = false;
+	private volatile boolean ignoreRefreshMiss = true;
 	private volatile float refreshrate = -1;
 
 	@Override
@@ -120,7 +121,7 @@ public class Engine implements Startable, Suspendable, Resetable {
 
 				while ( omega >= 1 ) {
 					renderable = true;
-					omega--;
+					omega -= ignoreRefreshMiss ? omega : 1;
 					pollInput();
 					tick();
 				}
@@ -181,6 +182,14 @@ public class Engine implements Startable, Suspendable, Resetable {
 
 	public synchronized Timing getTiming() {
 		return timing;
+	}
+
+	public void setIgnoreRefreshMiss( boolean ignoreRefreshMiss ) {
+		this.ignoreRefreshMiss = ignoreRefreshMiss;
+	}
+
+	public boolean isIgnoreRefreshMiss() {
+		return ignoreRefreshMiss;
 	}
 
 	public synchronized float getRefreshRate() {
