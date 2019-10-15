@@ -1,2 +1,2 @@
 # Penguin Engine
-A multithreaded logic and rendering engine for Java.
+A multithreaded logic and rendering engine.
